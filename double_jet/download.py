@@ -306,8 +306,18 @@ def _download_season(cfg: Config, year: int, hourly: bool, log: logging.Logger) 
         if hourly:
             _client().retrieve(dataset, request, str(nc_part))
         else:
+            # Plan §1.4 recorded, from ECMWF's documentation, that the derived product *always*
+            # returns a ZIP. Measured otherwise on 2026-09-03 (smoke job 3466587): the retrieval
+            # delivered a bare netCDF and `extract_zip` failed with "File is not a zip file".
+            # The container is therefore detected, not assumed. Either form yields the same `.nc`
+            # artifact, and §4.1 already treats the ZIP as incidental transport rather than a
+            # deliverable, so nothing downstream changes. See docs/deviations.md.
             _client().retrieve(dataset, request, str(zip_part))
-            extract_zip(zip_part, nc_part)
+            if zipfile.is_zipfile(zip_part):
+                extract_zip(zip_part, nc_part)
+            else:
+                os.replace(zip_part, nc_part)
+                zip_part = None          # there was no transport container to keep
         ok, reason = _check_shape(cfg, nc_part, hourly)
         if not ok:
             raise DownloadError(f"season {label}: the retrieved file failed the shape check: "

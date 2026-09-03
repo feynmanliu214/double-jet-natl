@@ -21,7 +21,9 @@ from __future__ import annotations
 import calendar
 import json
 import logging
+import shutil
 import sys
+import types
 import zipfile
 from pathlib import Path
 
@@ -416,3 +418,38 @@ def _logger() -> logging.Logger:
     log = logging.getLogger("test_profile")
     log.addHandler(logging.NullHandler())
     return log
+
+
+@pytest.mark.parametrize("as_zip", [True, False])
+def test_derived_product_is_accepted_whether_or_not_it_arrives_zipped(tmp_path, monkeypatch, as_zip):
+    """The derived product's container is detected, not assumed.
+
+    Plan §1.4 recorded from ECMWF's documentation that this product *always* returns a ZIP.
+    Smoke job 3466587 (2026-09-03) measured otherwise: it delivered a bare netCDF, and the
+    unconditional `extract_zip` failed with "File is not a zip file". Both forms must now yield
+    the same `.nc` artifact plus its request sidecar -- and §4.1 already calls the ZIP incidental
+    transport, so no deliverable depends on which arrived. See docs/deviations.md.
+    """
+    cfg = feb_cfg(tmp_path)
+    year = 2018
+    payload = write_season(tmp_path / "payload.nc", cfg, year=year)
+
+    def fake_retrieve(dataset, request, target):
+        """Stand in for cdsapi: write whichever container this parametrization is testing."""
+        if as_zip:
+            with zipfile.ZipFile(target, "w") as archive:
+                archive.write(payload, arcname="data_stream-oper_stepType-avgua.nc")
+        else:
+            shutil.copyfile(payload, target)
+
+    monkeypatch.setattr(download, "_client",
+                        lambda: types.SimpleNamespace(retrieve=fake_retrieve))
+    download._download_season(cfg, year, hourly=False, log=_logger())
+
+    paths = download.season_paths(cfg, year)
+    assert Path(paths["nc"]).exists(), "the season's .nc artifact must exist in both cases"
+    assert Path(paths["request"]).exists(), "the request sidecar must exist in both cases"
+    # The ZIP is kept only when one actually arrived; its absence never makes a season incomplete.
+    assert Path(paths["zip"]).exists() is as_zip
+    assert download.season_is_complete(cfg, year) == (True, "")
+    assert profile.open_normalized(Path(paths["nc"]), cfg).shape == (cfg.days_per_season, 221, 361)
