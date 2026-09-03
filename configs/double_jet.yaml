@@ -1,0 +1,56 @@
+# THE config block. Every threshold in the wave-1 scientific contract lives here and nowhere else.
+# Changing any value in this file is an escalation (wave1-plan.md §11), not a code edit.
+# Units: latitudes/longitudes in degrees, winds in m s-1, pressure in hPa.
+
+# --- what is retrieved -------------------------------------------------------
+dataset: derived-era5-pressure-levels-daily-statistics   # plan §1.4: the contract's daily mean
+hourly_dataset: reanalysis-era5-pressure-levels          # plan §4.1 R1 cross-check only
+variable: u_component_of_wind
+pressure_level: 250
+season_months: [5, 6, 7, 8, 9]        # MJJAS
+year_first: 1979
+year_last: 2025                       # 47 complete seasons, 7191 days (plan §0 R3)
+smoke_year: 2018
+
+# Derived-daily-statistics process inputs (plan §1.4). No `grid` key, ever (plan §1.6).
+daily_statistic: daily_mean
+time_zone: utc+00:00
+frequency: 6_hourly
+# The hours the derived product's daily mean is built from; the R1 cross-check averages
+# exactly these from the hourly product and asserts equality.
+hourly_times: ["00:00", "06:00", "12:00", "18:00"]
+r1_tolerance: 1.0e-3                  # m s-1, max abs difference allowed by the R1 gate
+
+# --- sector ------------------------------------------------------------------
+sector:
+  lat_min: 20.0
+  lat_max: 75.0
+  lon_min: -60.0
+  lon_max: 30.0
+  resolution: 0.25                    # native ERA5 grid -> 221 latitudes x 361 longitudes
+
+# --- detection thresholds ----------------------------------------------------
+detection:
+  u_core_min: 15.0                    # m s-1; a local maximum below this is not a core
+  separation_min_deg: 10.0            # minimum latitude separation of a double-jet pair
+  prominence_min: 5.0                 # m s-1 below the weaker core the interjet minimum must fall
+  smooth_window_deg: 2.5              # boxcar window -> 11 grid points (plan §2 I1)
+
+# --- sanity checks -----------------------------------------------------------
+sanity:
+  double_fraction_min: 0.05           # hard gate (plan §4.4)
+  double_fraction_max: 0.90           # hard gate
+  core_lat_min: 25.0                  # reported, not a gate (plan §0 R2)
+  core_lat_max: 70.0
+  core_lat_fraction_min: 0.95         # reported against, never enforced
+  smoke_peak_min: 20.0                # printed for the operator's eyeball check (plan §2 I5)
+  smoke_peak_max: 40.0
+
+# --- where bytes land (plan §6) ----------------------------------------------
+paths:
+  scratch_raw: $SCRATCH/double-jet-natl/era5_raw   # raw ERA5, never under $HOME or $WORK
+  data_dir: data
+  figs_dir: figs
+
+# --- download mechanics ------------------------------------------------------
+max_in_flight: 3                      # wave prompt: at most 3 CDS requests at once
