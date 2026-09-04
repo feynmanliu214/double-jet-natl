@@ -84,3 +84,59 @@ boundary in May–June, so some southern cores plausibly belong to a jet whose t
 
 This is **one season**; E3 concerns the full archive. Recorded here so the campaign's number can be
 compared against it rather than judged fresh.
+
+---
+
+## D2 — The derived product's throughput is ~1 season/hour, not "minutes per season"
+
+**Date:** 2026-09-04 · **Evidence:** campaign job `3466925` (skx), TIMEOUT at 04:00:03,
+`logs/download_all_3466925.{out,err}`
+**Plan text contradicted:** §1.5, last bullet —
+
+> **Queue wait**, from this account's 2026-08-25 history: **8–95 s to start** (median ≈ 15 s). …
+> A season is minutes, not hours.
+
+**What actually happened.** In 4 h the job submitted 8 requests and completed **5 seasons**
+(1979–1983). It hit the walltime with 3 requests still in `accepted`. Season completions landed at
+02:19, 02:55, 03:33, 04:24, 05:20 — inter-completion gaps of **36, 38, 51, 56 min**.
+
+Two facts from the request lifecycle, both load-bearing:
+
+1. **CDS serializes this account's derived-product requests.** Three were in flight at all times
+   (the `max_in_flight: 3` pool worked as designed), but every `running` transition is immediately
+   preceded by the previous `successful` — never two at once. Concurrency buys nothing here.
+2. **Compute is fast; the queue wait is the cost, and it grows.** `running -> successful` was dead
+   steady at **2m00s–2m39s** every time. `accepted -> running` grew monotonically:
+   **14 s → 34 min → 36 min → 49 min → 54 min**. Per-request latency grew 3 → 39 → 77 → 125 →
+   145 min. This is per-user throttling that tightens under sustained use.
+
+**Why Gate 1 could not have caught it, and why §1.5 was nonetheless too optimistic.** §1.5's
+8–95 s figure is taken from this account's 2026-08-25 history, which §1.3 records as *ordinary*
+`reanalysis-era5-pressure-levels` retrievals. §1.3 also records that the derived dataset had **never
+been retrieved from this account**, so no derived-product timing existed to measure. §1.4 item 1
+already noted the mechanism — *"the daily aggregation is calculated during the retrieval process and
+is not part of a permanently archived dataset"* — but the plan did not connect that property to
+throughput: each season is a compute job in a throttled per-user queue, not an archive read.
+
+**The smoke run's 51 s was a cache hit, not a measurement.** Job `3466678` retrieved the identical
+object-store URL (`867bd2421be6a7e7a7e8a4e4b9f3e945.nc`) that the D1 attempt had already caused CDS
+to compute. The only cold single-request timing is D1's **2m55s**, which is consistent with the
+2-minute compute above and is fine in isolation — it simply does not survive 46 sequential requests.
+
+**Projection.** 41 seasons remain (1984–2025; 1979–1983 and 2018 are cached and will be skipped).
+At the observed 56 min/season that is **≈ 38 h**; if the throttle keeps tightening it exceeds the
+48 h queue ceiling. A 4 h walltime was never going to be enough, and this is not a Stampede3
+constraint — the compute node was idle almost the whole time.
+
+**Nothing was lost.** All 6 cached seasons carry matching request sidecars, no `.part` orphans
+survived the SIGKILL, and `season_is_complete` will skip exactly those 6 on the next run. The
+idempotence design (§4.1, R11) did its job: a resumed run completes only the gaps.
+
+**Not resolved here.** Fixing this needs either a larger shape (a longer walltime) or reopening
+ruling **R1** (which product supplies the daily mean). Both are operator decisions under §11 and
+`CLAUDE.md`'s compute rules; the executor stopped and reported rather than choosing.
+
+Relevant asset for that decision: **R1's gate returned `max_abs_diff = 0.0`** over all 12 206 493
+points of MJJAS 2018 (see the smoke note above). The derived daily product and the local mean of
+00/06/12/18 from the archived hourly dataset are *bit-identical*, which is a stronger equivalence
+than the documentation R1 was originally decided on.
