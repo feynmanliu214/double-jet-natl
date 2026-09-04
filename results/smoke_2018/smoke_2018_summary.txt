@@ -1,0 +1,28 @@
+==============================================================================
+double-jet classification -- sanity block (plan §4.4)
+==============================================================================
+days classified : 153
+  double        :     96  ( 62.7 %)
+  single        :     55  ( 35.9 %)
+  none          :      2  (  1.3 %)
+
+[GATE]     double-jet fraction 0.6275 against band 0.0500-0.9000 -> PASS
+
+[REPORT]   core latitudes within 25-70 N :  81.4 % of 247 recorded cores (target >= 95 %)
+           out-of-band cores : 46
+           worst offenders (up to 8):
+             2018-09-04    74.75 N
+             2018-05-12    74.50 N
+             2018-05-28    20.50 N
+             2018-07-11    74.50 N
+             2018-09-26    20.75 N
+             2018-07-09    74.00 N
+             2018-07-01    73.50 N
+             2018-09-27    21.50 N
+           REPORTED, NOT A GATE -- operator ruling R2. The band and the 95 % target are printed verbatim;
+           the run finishes and the operator judges. No band is moved here (plan §0 R2, §10 E3).
+
+[REPORT]   smoke profile, daily maximum of the smoothed profile (m s-1): median 26.87, min 14.65, max 48.81
+           configured plausibility band 20-40 m s-1, read as the SEASON MEDIAN (plan §2 I5)
+           printed for the operator's eyeball check -- never a gate.
+==============================================================================

@@ -1,0 +1,16 @@
+{
+  "year": 2018,
+  "passed": true,
+  "max_abs_diff": 0.0,
+  "n_compared": 12206493,
+  "n_expected": 12206493,
+  "tolerance": 0.001,
+  "hourly_times": [
+    "00:00",
+    "06:00",
+    "12:00",
+    "18:00"
+  ],
+  "derived_daily_path": "/scratch/11114/zhixingliu/double-jet-natl/era5_raw/u250_natl_mjjas_2018.nc",
+  "hourly_path": "/scratch/11114/zhixingliu/double-jet-natl/era5_raw/u250_natl_mjjas_2018_6hourly.nc"
+}
