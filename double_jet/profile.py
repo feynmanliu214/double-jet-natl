@@ -331,7 +331,8 @@ def build_intermediate(cfg: Config, years: list[int], out_path: Path, log) -> Pa
     """
     # Imported here, not at module scope: download.check_r1_equivalence imports open_normalized from
     # this module, and a top-level import in both directions is a cycle.
-    from .download import build_request, season_paths
+    from .download import season_paths
+    from .source import request_for
 
     if not years:
         raise ProfileError("build_intermediate was given no years to concatenate")
@@ -366,7 +367,7 @@ def build_intermediate(cfg: Config, years: list[int], out_path: Path, log) -> Pa
     ds = xr.Dataset({"U": combined.astype("float32")})
     ds = ds.assign_coords(latitude=ds["latitude"].astype("float64"))
     ds["latitude"].attrs = {"units": LAT_UNITS, "long_name": "latitude"}
-    ds.attrs = _intermediate_attrs(cfg, years, sources, build_request(cfg, years[0]))
+    ds.attrs = _intermediate_attrs(cfg, years, sources, request_for(cfg, years[0]))
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     ds.to_netcdf(
@@ -388,7 +389,7 @@ def _intermediate_attrs(cfg: Config, years: list[int], sources: list[dict[str, A
         "title": f"Unsmoothed zonal-mean {cfg.variable} at {cfg.pressure_level} hPa, "
                  f"{cfg.sector.lat_min:g}-{cfg.sector.lat_max:g}N "
                  f"{cfg.sector.lon_min:g}-{cfg.sector.lon_max:g}E",
-        "source_dataset": cfg.dataset,
+        "source_dataset": cfg.active_dataset,
         "variable": cfg.variable,
         "pressure_level": int(cfg.pressure_level),
         "pressure_level_units": LEVEL_UNITS,

@@ -54,3 +54,13 @@ paths:
 
 # --- download mechanics ------------------------------------------------------
 max_in_flight: 3                      # wave prompt: at most 3 CDS requests at once
+
+# --- which stage-1 source supplies the daily mean (deviation D3) --------------
+source: rda_hourly        # rda_hourly | cds_derived. cds_derived keeps download.py live.
+
+# --- the RDA archive on /glade (Derecho). Verified at Gate 1, 2026-09-04. ----
+rda:
+  root: /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl
+  file_template: "e5.oper.an.pl.128_131_u.ll025uv.{ymd}00_{ymd}23.nc"
+  dataset_id: ds633.0          # for the intermediate's source_dataset attribute
+  workers: 8                   # overridden by $PBS_NCPUS when set; see A10

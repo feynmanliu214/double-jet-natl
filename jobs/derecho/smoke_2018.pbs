@@ -1,0 +1,117 @@
+#!/bin/bash
+# =============================================================================
+# wave1-plan-derecho-addendum.md §A14 step 2 -- the 2018 regression gate.
+#
+# Builds MJJAS 2018 from the RDA hourly archive through the real pipeline and
+# then runs the §A9 three-part regression against the committed CDS baseline in
+# results/smoke_2018/. This is the gate that stands between the loader and the
+# campaign: NOTHING runs at 47-season scale until this passes (§A9, HANDOFF §7
+# campaign condition 1).
+#
+#   SMOKE BUDGET: up to FIVE smoke-scale submissions, 2018 only (HANDOFF §7,
+#   §A10.4). A smoke job that fails is ours to diagnose, fix and resubmit; if
+#   all five are spent without a clean end-to-end pass, STOP AND REPORT.
+#   The Gate-1 timing probe (job 7317125) is NOT one of the five.
+#
+# Shape is smoke-scale and strictly SMALLER than the pre-authorized campaign
+# shape (§A10.2): same node/cpu/memory so the 8-way loader parallelism is
+# exercised exactly as the campaign will exercise it, but one hour of walltime
+# instead of twelve. Measured cost (§A1.3): 65.8 s for the 153-day load at
+# 8-way, plus profile/classify/figure -- a few minutes in total.
+#
+# ---------------------------------------------------------------------------
+# SUBMIT FROM THE CHECKOUT ROOT, AND MAKE logs/ FIRST:
+#
+#     cd /glade/u/home/zhil/project/double-jet-natl
+#     mkdir -p logs
+#     qsub jobs/derecho/smoke_2018.pbs
+#
+# `logs/` MUST ALREADY EXIST AT SUBMIT TIME -- PBS opens the `-o` path before
+# the job body runs, so a prologue `mkdir` is too late (§A10.2).
+# ---------------------------------------------------------------------------
+#PBS -N djet_smoke_2018
+#PBS -A UCHI0014
+#PBS -q main
+#PBS -l select=1:ncpus=8:mem=64gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+#PBS -o logs/smoke_2018.out
+#
+# Account is UCHI0014 -- operator ruling O4 (§A1.4). URIC0009 is EXPIRED and
+# qsub refuses it at submit time. Never write it here.
+
+set -euo pipefail
+
+CHECKOUT=/glade/u/home/zhil/project/double-jet-natl
+PYTHON=/glade/work/zhil/conda_envs/aires/bin/python
+
+# --- never the driver bare on a login node (plan §5.0, HANDOFF §7) ----------
+if [[ -z "${PBS_JOBID:-}" ]]; then
+    echo "ALARM: \$PBS_JOBID is unset. This script builds a 153-day season and must" >&2
+    echo "       be submitted with qsub onto a compute node -- never bare on a login node." >&2
+    echo "       Submit it instead:" >&2
+    echo "           cd ${CHECKOUT} && mkdir -p logs && qsub jobs/derecho/smoke_2018.pbs" >&2
+    exit 2
+fi
+
+cd "${CHECKOUT}"
+
+if [[ ! -d logs ]]; then
+    echo "ALARM: logs/ does not exist in ${CHECKOUT}; PBS opened '-o logs/smoke_2018.out'" >&2
+    echo "       before this body ran, so creating it here would be too late." >&2
+    exit 2
+fi
+
+# --- environment ------------------------------------------------------------
+if ! declare -F module >/dev/null 2>&1 && ! command -v module >/dev/null 2>&1; then
+    source /etc/profile.d/z00_modules.sh
+fi
+module purge
+
+if [[ ! -x "${PYTHON}" ]]; then
+    echo "ALARM: interpreter ${PYTHON} is missing or not executable." >&2
+    exit 2
+fi
+
+# `cdsapi` is deliberately NOT required: the RDA path issues no CDS request.
+"${PYTHON}" -c 'import xarray, netCDF4, scipy, matplotlib, yaml'
+
+# --- provenance, so the log is self-describing ------------------------------
+echo "=== djet_smoke_2018 -- MJJAS 2018 from RDA, then the §A9 regression ==="
+echo "jobid     : ${PBS_JOBID}"
+echo "host      : $(hostname)"
+echo "date      : $(date -Is)"
+echo "cwd       : $(pwd)"
+echo "PBS_NCPUS : ${PBS_NCPUS:-<unset>}"
+echo "git       : $(git rev-parse --short HEAD 2>/dev/null || echo unknown)$(git diff --quiet HEAD 2>/dev/null || echo ' (DIRTY WORKING TREE)')"
+echo "python    : ${PYTHON}"
+echo "version   : $("${PYTHON}" --version 2>&1)"
+echo "======================================================================"
+# No worker-count export: $PBS_NCPUS is PBS's own and the loader reads it
+# directly (§A5.2 step 2). A second source of truth is a bug waiting to happen.
+
+# M9 -- the entry point runs from a clean shell.
+"${PYTHON}" -m double_jet --help >/dev/null && echo "M9: entry point OK"
+
+# --- the run ----------------------------------------------------------------
+# `set -e` is lifted around the driver on purpose. Exit 1 is not a crash here:
+# it is the documented code for "the run completed, wrote its figure, and a
+# hard gate or the §A9 regression then failed" (O5, §A7.3 item 3). That is
+# evidence to report, not a job to abort silently, so the code is captured and
+# named rather than allowed to kill the script mid-line.
+set +e
+"${PYTHON}" -m double_jet --config configs/double_jet.yaml --smoke
+rc=$?
+set -e
+
+echo "======================================================================"
+case "${rc}" in
+    0) echo "RESULT: exit 0 -- smoke season and the §A9 regression PASSED." ;;
+    1) echo "RESULT: exit 1 -- run completed but a hard sanity gate or the §A9" \
+            "regression FAILED. Read data/smoke_2018_regression.json and the diff" \
+            "above. Per O3: STOP and show the operator; do not retune a threshold." ;;
+    2) echo "RESULT: exit 2 -- preflight failed; the archive was not usable." ;;
+    *) echo "RESULT: exit ${rc} -- crash. See the traceback above." ;;
+esac
+echo "finished  : $(date -Is)"
+exit "${rc}"

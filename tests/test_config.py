@@ -181,12 +181,12 @@ def test_only_the_full_campaign_produces_the_contract_names(cfg):
     assert campaign.summary == Path("data/jet_states_summary.txt")
     assert campaign.panels == (Path("figs/double_jet_natl_panels.pdf"),
                                Path("figs/double_jet_natl_panels.png"))
-    assert campaign.r1_validation is None
+    assert campaign.evidence is None
     assert set(campaign.all_paths()) == CONTRACT_NAMES
 
     smoke = cli.output_names(cfg, (cfg.smoke_year, cfg.smoke_year), smoke=True)
     assert set(smoke.all_paths()) & CONTRACT_NAMES == set()
-    assert smoke.r1_validation == Path("data/smoke_2018_r1_validation.json")
+    assert smoke.evidence == Path("data/smoke_2018_regression.json")   # source: rda_hourly (§A7.3)
     assert smoke.panels == (Path("figs/smoke_2018.png"),)
 
     # A subset that shares an endpoint with the campaign must not borrow its names either.

@@ -31,6 +31,11 @@ PROVENANCE_DISTRIBUTIONS = (
 
 PLAN_PATH = "wave1-plan.md"
 
+# Which stage-1 source supplies the daily mean (deviation D3, addendum §A4). `cds_derived` is the
+# original CDS path and stays the default for any config that predates the key.
+SOURCES = ("cds_derived", "rda_hourly")
+DEFAULT_SOURCE = "cds_derived"
+
 
 class ConfigError(ValueError):
     """The config file is missing a key, or holds a value the contract does not allow."""
@@ -107,6 +112,26 @@ class Sanity:
 
 
 @dataclass(frozen=True)
+class Rda:
+    """Machine addressing for the RDA archive on /glade -- no scientific threshold lives here.
+
+    `root` and `file_template` are configured rather than hard-coded so that a repointed archive is
+    a config edit with a hash consequence (addendum §A4.3), not a code edit. Nothing in this class
+    is checked against the filesystem at load time; that is `preflight_archive`'s job alone.
+    """
+
+    root: Path
+    file_template: str
+    dataset_id: str
+    workers: int
+
+
+# The stand-in used when a config carries no `rda` block at all -- every CDS-path config, including
+# every existing test fixture. It addresses nothing, and nothing on the CDS path reads it.
+RDA_ABSENT = Rda(root=Path(""), file_template="", dataset_id="", workers=1)
+
+
+@dataclass(frozen=True)
 class Paths:
     scratch_raw: Path
     data_dir: Path
@@ -129,14 +154,25 @@ class Config:
     hourly_times: tuple[str, ...]
     r1_tolerance: float
     max_in_flight: int
+    source: str
     sector: Sector
     detection: Detection
     sanity: Sanity
+    rda: Rda
     paths: Paths
     source_path: Path
     config_sha256: str
 
     # -- derived quantities ---------------------------------------------------
+
+    @property
+    def active_dataset(self) -> str:
+        """The dataset the bytes actually came from -- CDS's product, or the RDA collection.
+
+        Provenance that names a dataset the data did not come from is worse than none, so every
+        recorded `source_dataset` reads this rather than `dataset` (addendum §A7.2).
+        """
+        return self.rda.dataset_id if self.source == "rda_hourly" else self.dataset
 
     @property
     def years(self) -> tuple[int, ...]:
@@ -178,8 +214,14 @@ class Config:
     # -- hashes and provenance ------------------------------------------------
 
     def profile_fields(self) -> dict:
-        """Exactly the fields that determine U(phi, t). Detection thresholds are excluded."""
-        return {
+        """Exactly the fields that determine U(phi, t). Detection thresholds are excluded.
+
+        `source` is here so a CDS-built and an RDA-built intermediate can never be silently
+        interchanged, and `hourly_times` because on the RDA path the loader reads it directly: it
+        *is* the definition of the daily mean there, and a change to it would otherwise alter every
+        value of U(phi, t) while leaving this hash identical (addendum §A4.3, O1, DR15).
+        """
+        fields = {
             "dataset": self.dataset,
             "variable": self.variable,
             "pressure_level": self.pressure_level,
@@ -189,6 +231,8 @@ class Config:
             "daily_statistic": self.daily_statistic,
             "time_zone": self.time_zone,
             "frequency": self.frequency,
+            "hourly_times": list(self.hourly_times),
+            "source": self.source,
             "sector": {
                 "lat_min": self.sector.lat_min,
                 "lat_max": self.sector.lat_max,
@@ -197,6 +241,11 @@ class Config:
                 "resolution": self.sector.resolution,
             },
         }
+        if self.source == "rda_hourly":
+            # A repointed archive is a different provenance and must not be silently reusable.
+            fields["rda_root"] = str(self.rda.root)
+            fields["rda_file_template"] = self.rda.file_template
+        return fields
 
     @property
     def profile_sha256(self) -> str:
@@ -244,6 +293,29 @@ def load_config(path: str | Path) -> Config:
                        for k in ("double_fraction_min", "double_fraction_max", "core_lat_min",
                                  "core_lat_max", "core_lat_fraction_min", "smoke_peak_min",
                                  "smoke_peak_max")})
+    source = str(raw.get("source", DEFAULT_SOURCE))
+    if source not in SOURCES:
+        raise ConfigError(
+            f"source {source!r} in {path.name} is not one of 'rda_hourly', 'cds_derived'"
+        )
+
+    # Shape only: keys present, types right. `_expand` resolves $VARS and never stats, so a config
+    # naming an archive this host cannot see still loads -- archive existence and readability are
+    # `preflight_archive`'s alone (addendum §A4.2, load-bearing: the whole suite loads the shipped
+    # YAML and must stay green off-machine).
+    rda_raw = raw.get("rda")
+    if rda_raw is None:
+        rda = RDA_ABSENT
+    elif not isinstance(rda_raw, dict):
+        raise ConfigError(f"key 'rda' in {path.name} does not parse to a mapping")
+    else:
+        rda = Rda(
+            root=_expand(_require(rda_raw, "root", "rda")),
+            file_template=str(_require(rda_raw, "file_template", "rda")),
+            dataset_id=str(_require(rda_raw, "dataset_id", "rda")),
+            workers=int(_require(rda_raw, "workers", "rda")),
+        )
+
     paths = Paths(
         scratch_raw=_expand(_require(raw["paths"], "scratch_raw", "paths")),
         data_dir=Path(_require(raw["paths"], "data_dir", "paths")),
@@ -265,9 +337,11 @@ def load_config(path: str | Path) -> Config:
         hourly_times=tuple(str(t) for t in _require(raw, "hourly_times", path.name)),
         r1_tolerance=float(_require(raw, "r1_tolerance", path.name)),
         max_in_flight=int(_require(raw, "max_in_flight", path.name)),
+        source=source,
         sector=sector,
         detection=detection,
         sanity=sanity,
+        rda=rda,
         paths=paths,
         source_path=path,
         config_sha256=hashlib.sha256(text).hexdigest(),

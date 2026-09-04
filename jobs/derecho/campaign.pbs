@@ -1,0 +1,113 @@
+#!/bin/bash
+# =============================================================================
+# wave1-plan-derecho-addendum.md §A10.2 -- the 47-season campaign on Derecho.
+#
+# All four stages (download -> profile -> classify -> figure) over MJJAS
+# 1979-2025, in ONE submission. Stage 1 is the RDA loader, not CDS: the daily
+# means are computed locally from the hourly archive already on /glade
+# (deviation D3). No network, no CDS request, no queue.
+#
+#   PRE-AUTHORIZED AT THIS SHAPE AND NOT ONE UNIT LARGER (HANDOFF §7, §A10.4).
+#   More nodes, more cpus, more memory, longer walltime, a different queue or a
+#   GPU queue is an ESCALATION to the operator, however small the increase.
+#
+# Measured headroom (§A1.3, §A10.1): peak 2.49 GB of the 64 GB requested;
+# ~1.5 h end-to-end against the 12 h ceiling, ~8x margin.
+#
+# Idempotent (§A10.3): completed seasons are skipped, seasons are written to a
+# .part and landed atomically, and a season that fails the seam is never
+# published. Resubmitting THIS SAME script until all 47 seasons are complete is
+# covered by the authorization. Nothing else is.
+#
+# ---------------------------------------------------------------------------
+# SUBMIT FROM THE CHECKOUT ROOT, AND MAKE logs/ FIRST:
+#
+#     cd /glade/u/home/zhil/project/double-jet-natl
+#     mkdir -p logs
+#     qsub jobs/derecho/campaign.pbs
+#
+# `logs/` MUST ALREADY EXIST AT SUBMIT TIME. PBS opens the `-o` path before the
+# job body runs, so a prologue `mkdir` is too late -- and `logs/` is gitignored,
+# so a fresh clone does not have it. This is the same lesson
+# jobs/smoke_2018.slurm records for Slurm (§A10.2); it is not a new one and it
+# must not be re-learned. The `-o` path is relative and resolves against the
+# submission directory, which is the second reason to qsub from the checkout
+# root. The body re-checks logs/ below and refuses if it is missing.
+# ---------------------------------------------------------------------------
+#PBS -N djet_campaign
+#PBS -A UCHI0014
+#PBS -q main
+#PBS -l select=1:ncpus=8:mem=64gb
+#PBS -l walltime=12:00:00
+#PBS -j oe
+#PBS -o logs/campaign.out
+#
+# The account is UCHI0014 -- operator ruling O4 (§A1.4). URIC0009, the account
+# the sibling repo `butterfly` uses, is EXPIRED and qsub refuses it at submit
+# time ("qsub: Account is in state: Expired"). Never write it here.
+
+set -euo pipefail
+
+CHECKOUT=/glade/u/home/zhil/project/double-jet-natl
+PYTHON=/glade/work/zhil/conda_envs/aires/bin/python
+
+# --- never the driver bare on a login node (plan §5.0, HANDOFF §7) ----------
+if [[ -z "${PBS_JOBID:-}" ]]; then
+    echo "ALARM: \$PBS_JOBID is unset. This script runs the 47-season campaign and must" >&2
+    echo "       be submitted with qsub onto a compute node -- never bare on a login node." >&2
+    echo "       Submit it instead:" >&2
+    echo "           cd ${CHECKOUT} && mkdir -p logs && qsub jobs/derecho/campaign.pbs" >&2
+    exit 2
+fi
+
+cd "${CHECKOUT}"
+
+# --- the logs/ directory the -o path above already depended on --------------
+if [[ ! -d logs ]]; then
+    echo "ALARM: logs/ does not exist in ${CHECKOUT}." >&2
+    echo "       PBS opened '-o logs/campaign.out' BEFORE this body ran, so creating the" >&2
+    echo "       directory here would be too late to be of any use. Run 'mkdir -p logs'" >&2
+    echo "       in the checkout root before qsub." >&2
+    exit 2
+fi
+
+# --- environment ------------------------------------------------------------
+if ! declare -F module >/dev/null 2>&1 && ! command -v module >/dev/null 2>&1; then
+    source /etc/profile.d/z00_modules.sh
+fi
+module purge
+
+# The interpreter is used by absolute path rather than via `conda activate`:
+# after `module purge` there is no conda on PATH, and one absolute path is one
+# source of truth. Python 3.11.11, xarray 2025.1.2, netCDF4 1.7.2, numpy 2.2.4,
+# scipy 1.15.2, matplotlib 3.10.0, pandas 2.2.3, pyyaml 6.0.2 (§A1.5).
+if [[ ! -x "${PYTHON}" ]]; then
+    echo "ALARM: interpreter ${PYTHON} is missing or not executable." >&2
+    exit 2
+fi
+
+# The env is what we think it is. `cdsapi` is deliberately NOT in this list:
+# the RDA path issues no CDS request and must not require it (§A1.5, §A10.2).
+"${PYTHON}" -c 'import xarray, netCDF4, scipy, matplotlib, yaml'
+
+# --- provenance, so the log is self-describing ------------------------------
+echo "=== djet_campaign -- MJJAS 1979-2025, 47 seasons (addendum §A10) ==="
+echo "jobid     : ${PBS_JOBID}"
+echo "host      : $(hostname)"
+echo "date      : $(date -Is)"
+echo "cwd       : $(pwd)"
+echo "PBS_NCPUS : ${PBS_NCPUS:-<unset>}"
+echo "git       : $(git rev-parse --short HEAD 2>/dev/null || echo unknown)$(git diff --quiet HEAD 2>/dev/null || echo ' (DIRTY WORKING TREE)')"
+echo "python    : ${PYTHON}"
+echo "version   : $("${PYTHON}" --version 2>&1)"
+echo "===================================================================="
+# NOTE: no worker-count export. $PBS_NCPUS above is set by PBS itself and the
+# loader reads it straight out of the environment (§A5.2 step 2). A shell
+# variable of our own would be a second, divergent source of truth for the pool
+# size -- so it is echoed for the record and never re-exported.
+
+# M9 -- the entry point runs from a clean shell.
+"${PYTHON}" -m double_jet --help
+
+# --- the run: addendum §A10.2 -----------------------------------------------
+"${PYTHON}" -m double_jet --config configs/double_jet.yaml

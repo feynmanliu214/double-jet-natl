@@ -249,7 +249,7 @@ def run_figure(
         f"{cfg.pressure_level} hPa zonal-mean $u$ and jet-core states, "
         f"{seasons.size} season{'' if single else 's'} "
         f"({'-'.join(calendar.month_abbr[m] for m in cfg.season_months)})\n"
-        f"source: {cfg.dataset} · {cfg.sector.lon_min:g}–{cfg.sector.lon_max:g}°E · "
+        f"source: {cfg.active_dataset} · {cfg.sector.lon_min:g}–{cfg.sector.lon_max:g}°E · "
         f"{times.min():%Y-%m-%d} to {times.max():%Y-%m-%d}\n"
         f"core $u\\geq${det.u_core_min:g} m s$^{{-1}}$ · "
         f"separation $\\geq${det.separation_min_deg:g}° · "

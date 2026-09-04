@@ -54,6 +54,7 @@ ERA5_NAMES = {"time": "valid_time", "level": "pressure_level",
 def make_cfg(tmp_path: Path, name: str = "cfg.yaml", **overrides) -> Config:
     """The real config with only `paths` (always) and the given top-level keys rewritten."""
     raw = yaml.safe_load(REAL_YAML.read_text())
+    overrides.setdefault("source", "cds_derived")   # these fixtures are CDS-path (addendum §A8)
     raw.update(overrides)
     raw["paths"] = {"scratch_raw": str(tmp_path), "data_dir": str(tmp_path / "data"),
                     "figs_dir": str(tmp_path / "figs")}
