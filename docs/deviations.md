@@ -50,3 +50,37 @@ parametrized over both containers. Reverting the fix reproduces the production e
 | **R10 / §1.8** — `skx-dev` outbound network unproven | **Proven.** Preflight on the compute node: DNS `cds.climate.copernicus.eu -> 136.156.139.54`, `https://cds.climate.copernicus.eu/api -> 202`, `https://object-store.os-api.cci2.ecmwf.int/ -> 200`. Identical to the `skx` values §1.8 measured. |
 | **R3 / E5** — derived dataset licence never retrieved from this account | **Cleared.** No 403; the request was accepted and completed. The licence covers it. |
 | **§1.5** — queue wait and processing time | Queue wait 20 min (skx-dev fully allocated at submission, not a CDS delay). CDS processing: derived daily 2 min 55 s, 6-hourly 1 min 28 s — both inside §1.5's estimate. |
+
+---
+
+## Note — smoke season outcome (job `3466678`, 2026-09-03)
+
+The rerun after D1 completed in 1 min 15 s, exit 0, issuing one CDS request (the 6-hourly operand
+was already complete on `$SCRATCH` and was skipped, which is R11's identity check doing its job).
+
+**M2 settled decisively.** The R1 equivalence gate returned `max_abs_diff = 0.0` over all
+12 206 493 points (= 153 × 221 × 361, the full expected count). The derived daily-statistics product
+is not merely within 1e-3 of the mean of 00/06/12/18 UTC — it is *bit-identical* to it. §4.1's R4
+risk is closed.
+
+**One diagnostic misses its target, and it is E3's to judge.** Core latitudes within 25–70 °N:
+**81.4 %** of 247 recorded cores, against the ≥ 95 % target — a wider miss than the 89.9 % §1.7
+measured on the 1.5° probe. Under ruling R2 the run finished and reported; no band was moved.
+
+§1.7's supporting argument is *weakened but not overturned* on real 0.25° data:
+
+| §1.7 claim (1.5° probe, MJJAS 2020) | Measured (0.25° ERA5, MJJAS 2018) |
+|---|---|
+| zero out-of-band cores within one half-window (1.25°) of 20 N / 75 N | **6 of 46** (13 %) |
+| out-of-band cores are physically real, not edge artifacts | still true of **87 %** of them |
+| 23–72 N holds 97.4 % | 23–72 N holds 91.1 % |
+| 22–74 N holds 100 % | 22–74 N holds 97.2 % |
+
+Zero cores sit on the outermost grid row, as I3/R7 guarantees by construction. The out-of-band
+population is 29 subtropical cores at 20.50–24.75 N (median 23.5 m s⁻¹) and 17 high-latitude cores
+at 71.00–74.75 N (median 21.2 m s⁻¹). The figure shows the subtropical jet still strong at the 20 °N
+boundary in May–June, so some southern cores plausibly belong to a jet whose true maximum lies
+*south of the domain* — a domain-truncation question, not an algorithm fault.
+
+This is **one season**; E3 concerns the full archive. Recorded here so the campaign's number can be
+compared against it rather than judged fresh.
