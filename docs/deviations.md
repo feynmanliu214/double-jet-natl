@@ -140,3 +140,45 @@ Relevant asset for that decision: **R1's gate returned `max_abs_diff = 0.0`** ov
 points of MJJAS 2018 (see the smoke note above). The derived daily product and the local mean of
 00/06/12/18 from the archived hourly dataset are *bit-identical*, which is a stronger equivalence
 than the documentation R1 was originally decided on.
+
+---
+
+## D3 — Ruling R1 reopened: the campaign moves to Derecho and to the archived hourly product
+
+**Date:** 2026-09-04 · **Authority:** operator, explicit, this date
+**Plan text superseded:** §0 **R1** — the derived daily-statistics product supplies the daily mean
+for all 47 seasons.
+
+**The decision.** The CDS retrieval campaign is abandoned. The daily means are computed locally
+from the ERA5 hourly archive already resident on NCAR Derecho's `/glade` filesystem (NCAR RDA
+`d633000`, `e5.oper.an.pl`), by a Derecho agent picking up this repository. The definition of the
+daily mean is unchanged: the unweighted mean of the 00, 06, 12 and 18 UTC analyses, per
+`hourly_times` in the config.
+
+**Why this is not a change to the science.** R1's own verification gate measured the two products
+**bit-identical** — `max_abs_diff = 0.0` over all 12 206 493 points of MJJAS 2018
+(`results/smoke_2018/smoke_2018_r1_validation.json`). R1 was originally decided on ECMWF's
+documentation of the two products; it is now being reopened on a direct measurement of them, which
+is the stronger evidence. No sector, level, season, year range, detection threshold or gate moves.
+
+**Why it was necessary.** D2: the derived product is computed per request, CDS serializes this
+account's requests, and the per-user queue wait grows monotonically under sustained use — measured
+throughput ≈ 1 season/hour, projecting ≈ 38 h for the 41 remaining seasons against a 48 h ceiling
+that was still tightening. The archived hourly data on `/glade` has no retrieval queue at all.
+
+**Scope.** This authorizes the change of data source and nothing else. `double_jet/download.py` and
+its tests stay in the tree, working: they are the provenance record for the 2018 R1 evidence and the
+only code that can re-derive it. A reader that would require changing a frozen number to work is a
+discrepancy to report, not to accommodate.
+
+**Evidence preserved.** The 2018 pair — CDS derived daily and the 6-hourly cross-check file — was
+copied off `$SCRATCH` (which purges on inactivity) to
+`/work2/11114/zhixingliu/double-jet-natl/era5_r1_evidence/`, 123 MB, with `SHA256SUMS`. The five
+seasons 1979–1983 downloaded before the timeout were left to purge: they are reproducible from RDA
+and the operator chose not to preserve them.
+
+**Handoff.** `HANDOFF.md` carries the full brief for the Derecho agent: the stage-1 seam and the
+exact contract `profile.open_normalized` enforces, the archive path to characterize before coding,
+the compute authorization, and the deliverables. `results/` now carries the smoke-season outputs and
+the job logs as a committed regression baseline, since `data/`, `figs/` and `logs/` are gitignored
+and a fresh clone would otherwise arrive with no evidence at all.
