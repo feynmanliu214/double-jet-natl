@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Double-jet frequency, North Atlantic–Europe — mockup on synthetic data</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1f2320; --mute:#6f766f; --rule:#d9dcd8; --hover:#f2f4f1;
+    --double:#1b9e77; --single:#d95f02; --none:#ebece9;
+    --sans: "Inter", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 var(--sans); }
+  main{ max-width:1180px; margin:0 auto; padding:28px 24px 60px; }
+  h1{ font-size:20px; font-weight:600; margin:0 0 6px; letter-spacing:-0.01em; }
+  .method{ display:grid; grid-template-columns:max-content 1fr; gap:2px 14px; margin:0 0 10px; max-width:96ch; }
+  .method dt{ color:var(--mute); }
+  .method dd{ margin:0; }
+  .method dd span{ white-space:nowrap; }
+  .method dd span + span::before{ content:"·"; color:var(--mute); margin:0 8px; }
+  .src{ color:var(--mute); margin:0 0 14px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .src input[type=file]{ font:inherit; max-width:240px; }
+  .src button{ font:inherit; padding:3px 8px; border:1px solid var(--rule); border-radius:4px; background:#fff; color:var(--ink); cursor:pointer; }
+  .src button:hover{ background:var(--hover); }
+
+  svg{ display:block; width:100%; height:auto; font-family:var(--sans); }
+  .axis line{ stroke:var(--rule); }
+  .axis text, .series text{ fill:var(--mute); font-size:11px; }
+  .series .ln{ fill:none; stroke:var(--double); stroke-width:1.6; stroke-linejoin:round; }
+  .series .pt{ fill:#fff; stroke:var(--double); stroke-width:1.6; cursor:pointer; }
+  .series .pt:hover{ fill:var(--double); }
+  .series .pt.sel{ fill:var(--double); r:5; }
+  .series .hit{ fill:transparent; cursor:pointer; }
+  .series .hit:hover + .pt{ fill:var(--double); }
+
+  h2{ font-size:16px; font-weight:600; margin:30px 0 2px; display:flex; align-items:baseline; gap:12px; }
+  h2 .nav{ display:inline-flex; gap:4px; }
+  h2 .nav button{ font:inherit; font-size:12px; padding:2px 8px; border:1px solid var(--rule); border-radius:4px; background:#fff; cursor:pointer; }
+  h2 .nav button:hover{ background:var(--hover); }
+  .detail-note{ color:var(--mute); margin:0 0 10px; }
+  .legend{ display:flex; gap:18px; align-items:center; color:var(--mute); margin:0 0 6px; }
+  .sw{ display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:-1px; margin-right:6px; }
+  .detail .core{ stroke:#fff; stroke-width:0.8; }
+  .detail .link{ fill:none; stroke-width:1.2; stroke-linecap:round; }
+  .detail .bridge{ stroke:var(--double); stroke-opacity:0.35; stroke-width:1; }
+
+  #tip{ position:fixed; pointer-events:none; background:var(--ink); color:#fff; padding:6px 9px; border-radius:4px;
+        font-size:12px; line-height:1.4; white-space:nowrap; display:none; z-index:10; }
+  #tip b{ font-weight:600; }
+  .foot{ color:var(--mute); margin-top:34px; font-size:13px; max-width:72ch; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="title">Double-jet frequency over the North Atlantic–Europe sector, extended summer 1979–2025</h1>
+  <dl class="method" id="method"></dl>
+  <p class="src"><span id="srcname">Synthetic data</span>
+    <input id="file" type="file" accept=".csv,text/csv" aria-label="load jet_states csv">
+    <button id="regen" type="button">New synthetic seed</button></p>
+
+  <svg id="annual" role="img" aria-label="Percentage of season days classified double jet, per season"></svg>
+
+  <h2><span id="dtitle">Season</span>
+    <span class="nav"><button id="prev" type="button" aria-label="previous season">◀</button><button id="next" type="button" aria-label="next season">▶</button></span>
+  </h2>
+  <p class="detail-note" id="dnote"></p>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--double)"></i>double jet, both cores</span>
+    <span><i class="sw" style="background:var(--single)"></i>single jet</span>
+    <span>no marker: no core above threshold</span>
+  </div>
+  <svg id="detail" class="detail" role="img" aria-label="Core latitudes for the selected season"></svg>
+
+  <p class="foot">Click a point in the top chart, or use ← → to step through seasons. Lines join consecutive days in the same state; vertical ties join the two cores of one day.</p>
+</main>
+<div id="tip"></div>
+
+<script>
+(() => {
+  // ---------- metadata: production fills this from the intermediate's attributes ----------
+  const META = [   // label → parts; production fills this from the intermediate's attributes
+    ["Data",       ["ERA5, NCAR RDA ds633.0", "zonal wind u at 250 hPa", "0.25° grid"]],
+    ["Sector",     ["60°W–30°E zonal mean", "20–75°N"]],
+    ["Time",       ["May–September, 1979–2025", "daily mean of the 00, 06, 12, 18 UTC analyses"]],
+    ["Profile",    ["2.5° boxcar smoothing in latitude"]],
+    ["Double jet", ["core u ≥ 15 m s⁻¹", "two cores ≥ 10° apart", "minimum between them ≥ 5 m s⁻¹ below the weaker core"]],
+    ["Each point", ["share of the season's 153 days classified double jet"]],
+  ];
+  document.getElementById("method").innerHTML =
+    META.map(([k, parts]) => `<dt>${k}</dt><dd>${parts.map(t => `<span>${t}</span>`).join("")}</dd>`).join("");
+
+  const NDAYS = 153, MONTH_STARTS = [0, 31, 61, 92, 123], MONTHS = ["May", "Jun", "Jul", "Aug", "Sep"];
+  const COLOR = { double: "var(--double)", single: "var(--single)" };
+  const LAT = [20, 75];
+
+  // ---------- synthetic data ----------
+  let seed = 7;
+  function rng() { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; }
+  function gauss() { return Math.sqrt(-2 * Math.log(rng() + 1e-12)) * Math.cos(2 * Math.PI * rng()); }
+  function genToy(y0 = 1979, y1 = 2025) {
+    const seasons = [];
+    for (let y = y0; y <= y1; y++) {
+      const bias = 0.28 + 0.25 * (y - y0) / (y1 - y0) + 0.12 * gauss();
+      const pDD = Math.min(0.92, 0.72 + bias * 0.3), pSS = 0.86;
+      let state = rng() < bias ? "double" : "single";
+      let latS = 47 + 3 * gauss(), south = 31 + 2 * gauss(), north = 57 + 2 * gauss();
+      const days = [];
+      for (let d = 0; d < NDAYS; d++) {
+        const r = rng();
+        if (state === "double") state = r < pDD ? "double" : (r < pDD + 0.03 ? "none" : "single");
+        else if (state === "single") state = r < pSS ? "single" : (r < pSS + 0.02 ? "none" : "double");
+        else state = r < 0.5 ? "single" : "double";
+        latS += 0.6 * gauss(); latS = 40 + 0.85 * (latS - 40);
+        south += 0.5 * gauss(); south = 31 + 0.9 * (south - 31);
+        north += 0.6 * gauss(); north = 57 + 0.9 * (north - 57);
+        const date = new Date(Date.UTC(y, 4, 1 + d)).toISOString().slice(0, 10);
+        if (state === "double") days.push({ d, date, state, lat1: south, u1: 18 + 5 * rng(), lat2: north, u2: 24 + 8 * rng(), inter: 8 + 4 * rng() });
+        else if (state === "single") days.push({ d, date, state, lat1: latS, u1: 26 + 8 * rng(), lat2: NaN, u2: NaN, inter: NaN });
+        else days.push({ d, date, state, lat1: NaN, u1: NaN, lat2: NaN, u2: NaN, inter: NaN });
+      }
+      seasons.push({ year: y, days });
+    }
+    return seasons;
+  }
+
+  // ---------- CSV loader (real jet_states file) ----------
+  function parseCSV(text) {
+    const lines = text.trim().split(/\r?\n/);
+    const head = lines[0].split(",").map(s => s.trim().toLowerCase());
+    const col = n => head.indexOf(n);
+    const iDate = col("date"), iState = col("state"), iL1 = col("lat_1"), iU1 = col("u_1"),
+          iL2 = col("lat_2"), iU2 = col("u_2"), iInter = col("interjet_min");
+    if (iDate < 0 || iState < 0) throw new Error("need columns date and state");
+    const byYear = new Map();
+    for (const line of lines.slice(1)) {
+      if (!line.trim()) continue;
+      const f = line.split(",");
+      const date = f[iDate].trim(), dt = new Date(date + "T00:00:00Z"), y = dt.getUTCFullYear();
+      const d = Math.round((dt - Date.UTC(y, 4, 1)) / 864e5);
+      if (d < 0 || d >= NDAYS) continue;
+      const num = i => (i >= 0 && f[i] !== undefined && f[i].trim() !== "") ? parseFloat(f[i]) : NaN;
+      if (!byYear.has(y)) byYear.set(y, Array.from({ length: NDAYS }, (_, k) => ({ d: k, date: "", state: "none", lat1: NaN, u1: NaN, lat2: NaN, u2: NaN, inter: NaN })));
+      byYear.get(y)[d] = { d, date, state: f[iState].trim().toLowerCase(), lat1: num(iL1), u1: num(iU1), lat2: num(iL2), u2: num(iU2), inter: num(iInter) };
+    }
+    return [...byYear.keys()].sort((a, b) => a - b).map(y => ({ year: y, days: byYear.get(y) }));
+  }
+
+  function runs(states) {
+    const out = [];
+    for (let i = 0; i < states.length; i++) {
+      const last = out[out.length - 1];
+      if (last && last.state === states[i]) last.end = i; else out.push({ state: states[i], start: i, end: i });
+    }
+    for (const r of out) r.len = r.end - r.start + 1;
+    return out;
+  }
+
+  // ---------- state ----------
+  let seasons = genToy(), selected = 2018;
+  const $ = id => document.getElementById(id), tip = $("tip");
+  const stat = s => {
+    const st = s.days.map(x => x.state), rs = runs(st).filter(r => r.state === "double");
+    const nD = st.filter(x => x === "double").length;
+    return { nD, pct: 100 * nD / NDAYS, nRuns: rs.length, longest: rs.length ? Math.max(...rs.map(r => r.len)) : 0 };
+  };
+
+  // ---------- annual line chart ----------
+  function renderAnnual() {
+    const left = 46, right = 16, top = 14, bottom = 30, W = 1100, H = 250, plotH = H - top - bottom;
+    const ys = seasons.map(s => s.year), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const x = yr => left + (yr - y0) / Math.max(1, y1 - y0) * (W - left - right);
+    const vals = seasons.map(stat);
+    const ymax = Math.min(100, Math.ceil((Math.max(...vals.map(v => v.pct)) + 5) / 10) * 10);
+    const y = p => top + (1 - p / ymax) * plotH;
+    let out = `<g class="axis">`;
+    for (let p = 0; p <= ymax; p += 10) out += `<line x1="${left}" x2="${W - right}" y1="${y(p)}" y2="${y(p)}"/><text x="${left - 8}" y="${y(p) + 4}" text-anchor="end">${p}%</text>`;
+    for (let yr = Math.ceil(y0 / 5) * 5; yr <= y1; yr += 5) out += `<text x="${x(yr)}" y="${H - 8}" text-anchor="middle">${yr}</text>`;
+    out += `</g><g class="series">`;
+    out += `<path class="ln" d="${seasons.map((s, i) => (i ? "L" : "M") + x(s.year) + " " + y(vals[i].pct)).join("")}"/>`;
+    seasons.forEach((s, i) => {
+      out += `<circle class="hit" data-year="${s.year}" cx="${x(s.year)}" cy="${y(vals[i].pct)}" r="9"/>`;
+      out += `<circle class="pt${s.year === selected ? " sel" : ""}" data-year="${s.year}" cx="${x(s.year)}" cy="${y(vals[i].pct)}" r="${s.year === selected ? 5 : 3.5}"/>`;
+    });
+    out += `</g>`;
+    const svg = $("annual");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = out;
+    svg.querySelectorAll("circle").forEach(c => {
+      const yr = +c.dataset.year, v = vals[seasons.findIndex(s => s.year === yr)];
+      c.addEventListener("click", () => { selected = yr; renderAnnual(); renderDetail(); });
+      c.addEventListener("mousemove", ev => {
+        tip.innerHTML = `<b>${yr}</b> · ${v.pct.toFixed(1)}% · ${v.nD} double-jet days in ${v.nRuns} runs, longest ${v.longest} d`;
+        tip.style.display = "block"; tip.style.left = (ev.clientX + 14) + "px"; tip.style.top = (ev.clientY + 14) + "px";
+      });
+      c.addEventListener("mouseleave", () => tip.style.display = "none");
+    });
+  }
+
+  // ---------- detail: core latitudes for one season ----------
+  function renderDetail() {
+    const s = seasons.find(v => v.year === selected) || seasons[0]; selected = s.year;
+    const left = 46, top = 14, right = 16, bottom = 26, plotH = 250, W = 1100, H = top + plotH + bottom;
+    const cw = (W - left - right) / NDAYS, x = d => left + (d + 0.5) * cw;
+    const y = lat => top + (LAT[1] - lat) / (LAT[1] - LAT[0]) * plotH;
+    let out = `<g class="axis">`;
+    for (let lat = 20; lat <= 75; lat += 10) out += `<line x1="${left}" x2="${W - right}" y1="${y(lat)}" y2="${y(lat)}"/><text x="${left - 6}" y="${y(lat) + 4}" text-anchor="end">${lat}°N</text>`;
+    MONTH_STARTS.forEach((d, k) => { out += `<line x1="${left + d * cw}" x2="${left + d * cw}" y1="${top}" y2="${top + plotH}"/><text x="${left + d * cw + 4}" y="${H - 8}">${MONTHS[k]}</text>`; });
+    out += `</g>`;
+    const pt = (day, k) => { const lat = k === 1 ? day.lat1 : day.lat2; return isFinite(lat) ? { x: x(day.d), y: y(lat) } : null; };
+    const cores = day => day.state === "double" ? [1, 2] : day.state === "single" && isFinite(day.lat1) ? [1] : [];
+    let links = "", bridges = "", dots = "";
+    s.days.forEach((day, d) => {
+      const st = day.state, ks = cores(day);
+      if (ks.length === 2) { const a = pt(day, 1), b = pt(day, 2); if (a && b) bridges += `<line class="bridge" x1="${a.x}" x2="${b.x}" y1="${a.y}" y2="${b.y}"/>`; }
+      for (const k of ks) {
+        const p = pt(day, k); if (!p) continue;
+        dots += `<circle class="core" cx="${p.x}" cy="${p.y}" r="2.6" fill="${COLOR[st]}"/>`;
+        const nd = s.days[d + 1];
+        if (nd && nd.state === st) { const q = pt(nd, k); if (q) links += `<line class="link" x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke="${COLOR[st]}"/>`; }
+      }
+    });
+    const svg = $("detail");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = out + bridges + links + dots;
+    // hover: day readout
+    svg.onmousemove = ev => {
+      const r = svg.getBoundingClientRect(), d = Math.floor(((ev.clientX - r.left) * W / r.width - left) / cw);
+      if (d < 0 || d >= NDAYS) { tip.style.display = "none"; return; }
+      const day = s.days[d], lat = v => isFinite(v) ? v.toFixed(1) + "°N" : "–";
+      tip.innerHTML = `<b>${day.date || s.year + " day " + d}</b> · ${day.state}<br>` +
+        (day.state === "double" ? `cores ${lat(day.lat1)} / ${lat(day.lat2)} · min between ${isFinite(day.inter) ? day.inter.toFixed(0) : "–"} m/s` :
+         day.state === "single" ? `core ${lat(day.lat1)}` : "no core");
+      tip.style.display = "block"; tip.style.left = (ev.clientX + 14) + "px"; tip.style.top = (ev.clientY + 14) + "px";
+    };
+    svg.onmouseleave = () => tip.style.display = "none";
+    const v = stat(s);
+    $("dtitle").textContent = `${s.year}`;
+    $("dnote").textContent = `${v.nD} double-jet days (${v.pct.toFixed(0)}% of the season) in ${v.nRuns} runs; longest ${v.longest} d.`;
+  }
+
+  // ---------- wiring ----------
+  const rerender = () => { renderAnnual(); renderDetail(); };
+  const step = k => { const i = seasons.findIndex(s => s.year === selected); selected = seasons[Math.min(seasons.length - 1, Math.max(0, i + k))].year; rerender(); };
+  $("prev").addEventListener("click", () => step(-1));
+  $("next").addEventListener("click", () => step(1));
+  document.addEventListener("keydown", e => { if (e.key === "ArrowLeft") step(-1); if (e.key === "ArrowRight") step(1); });
+  $("regen").addEventListener("click", () => { seed = (Math.random() * 1e9) >>> 0; seasons = genToy(); $("srcname").textContent = "Synthetic data"; rerender(); });
+  $("file").addEventListener("change", ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    f.text().then(t => {
+      try { seasons = parseCSV(t); if (!seasons.some(s => s.year === selected)) selected = seasons[seasons.length - 1].year; $("srcname").textContent = f.name; rerender(); }
+      catch (e) { $("srcname").textContent = "Could not read " + f.name + ": " + e.message; }
+    });
+  });
+  rerender();
+})();
+</script>
+</body>
+</html>
