@@ -50,7 +50,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:                    # `pytest tests/...` from anywhere
     sys.path.insert(0, str(REPO_ROOT))
 
-from double_jet import cli, download, figure, profile, rda, source   # noqa: E402
+from double_jet import cli, download, explorer, figure, profile, rda, source  # noqa: E402
 from double_jet import classify as classify_mod                      # noqa: E402
 from double_jet.config import Config, load_config                    # noqa: E402
 from double_jet.download import DownloadError                        # noqa: E402
@@ -81,6 +81,12 @@ CONTRACT_NAMES = {
     Path("data/jet_states_summary.txt"),
     Path("figs/double_jet_natl_panels.pdf"),
     Path("figs/double_jet_natl_panels.png"),
+    # The explorer addendum's three (§B12.4). `results/season_summary.csv` is the first contract
+    # name outside `data/`/`figs/`; it is a *relative* literal because `output_names` anchors it
+    # relatively, exactly as it anchors the configured `data_dir`/`figs_dir` (§B10 item 2).
+    Path("results/season_summary.csv"),
+    Path("figs/double_jet_natl_explorer.html"),
+    Path("figs/double_jet_natl_annual.png"),
 }
 
 
@@ -976,6 +982,12 @@ def regression_operands(tmp_path: Path, cfg: Config, *, flip_date: str | None = 
         states_csv=current / f"{tag}_jet_states.csv",
         summary=current / f"{tag}_summary.txt",
         panels=(current / f"{tag}.png",),
+        # The explorer addendum's three fields are *required* (§B10 item 1), so they are supplied
+        # here under the same `current / f"{tag}_..."` convention as their siblings. The regression
+        # check does not read them -- they exist so the dataclass can be constructed at all.
+        explorer=current / f"{tag}_explorer.html",
+        season_summary=current / f"{tag}_season_summary.csv",
+        annual=current / f"{tag}_annual.png",
         evidence=current / f"{tag}_regression.json",
     )
     return baseline, out_paths
@@ -1096,9 +1108,9 @@ def test_check_regression_2018_refuses_misaligned_operands(tmp_path, archive):
 
 def test_smoke_evidence_path_resolves_source_dependently(tmp_path, monkeypatch):
     """§A8 row 24 (§A7.3 item 4, plan §8 R12, risk DR17): one slot, named for the check the
-    configured source can actually run -- and all three `all_paths()` lengths stay 5.
+    configured source can actually run -- and all three `all_paths()` lengths stay equal at 8.
 
-    A second field would have made a smoke run six paths long and broken the disjointness assertion
+    A second field would have made a smoke run nine paths long and broken the disjointness assertion
     that enforces R12. This test holds both configs to the same standard the frozen one is held to.
     """
     monkeypatch.setenv("SCRATCH", str(tmp_path / "scratch"))
@@ -1120,7 +1132,7 @@ def test_smoke_evidence_path_resolves_source_dependently(tmp_path, monkeypatch):
         assert smoke.evidence == expected
         assert campaign.evidence is None and subset.evidence is None
         assert (len(campaign.all_paths()) == len(smoke.all_paths())
-                == len(subset.all_paths()) == 5)
+                == len(subset.all_paths()) == 8)
         assert set(campaign.all_paths()) == CONTRACT_NAMES
         assert set(smoke.all_paths()) & CONTRACT_NAMES == set()
         assert set(subset.all_paths()) & CONTRACT_NAMES == set()
@@ -1160,6 +1172,9 @@ def test_smoke_without_profile_and_classify_skips_the_regression_and_says_so(tmp
     monkeypatch.setattr(classify_mod, "run_classify",
                         lambda *a, **k: calls.append("classify") or argparse.Namespace(ok=True))
     monkeypatch.setattr(figure, "run_figure", lambda *a, **k: calls.append("figure"))
+    # `explorer` joined `cli.STAGES` (§B10 item 3), so the control run below dispatches it too and
+    # the real builder would run against files no mock ever wrote (§B12.4 site 4).
+    monkeypatch.setattr(explorer, "run_explorer", lambda *a, **k: calls.append("explorer"))
     monkeypatch.setattr(rda, "check_regression_2018",
                         lambda *a, **k: calls.append("regression") or {"passed": True})
 
@@ -1183,7 +1198,10 @@ def test_smoke_without_profile_and_classify_skips_the_regression_and_says_so(tmp
 
     # the control: the gate is not vacuous -- with its operands' stages present, it runs.
     assert smoke_run(cli.STAGES) == cli.EXIT_OK
-    assert calls == ["preflight", "materialize", "profile", "classify", "figure", "regression"]
+    # `explorer` sits between `figure` and `regression`: this list is also what pins §B10 item 5's
+    # dispatch position, which §A7.3 fixed for the regression check and this addendum does not move.
+    assert calls == ["preflight", "materialize", "profile", "classify", "figure", "explorer",
+                     "regression"]
     assert not [r for r in caplog.records if "regression check is SKIPPED" in r.getMessage()]
 
 

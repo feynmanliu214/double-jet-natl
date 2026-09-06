@@ -35,6 +35,12 @@ CONTRACT_NAMES = {
     Path("data/jet_states_summary.txt"),
     Path("figs/double_jet_natl_panels.pdf"),
     Path("figs/double_jet_natl_panels.png"),
+    # The explorer addendum's three (§B12.4). `results/season_summary.csv` is the first contract
+    # name outside `data/`/`figs/`; it is a *relative* literal because `output_names` anchors it
+    # relatively, exactly as it anchors the configured `data_dir`/`figs_dir` (§B10 item 2).
+    Path("results/season_summary.csv"),
+    Path("figs/double_jet_natl_explorer.html"),
+    Path("figs/double_jet_natl_annual.png"),
 }
 
 
@@ -165,7 +171,7 @@ def test_output_names_are_pairwise_disjoint(cfg):
     smoke = cli.output_names(cfg, (cfg.smoke_year, cfg.smoke_year), smoke=True).all_paths()
     subset = cli.output_names(cfg, (2000, 2010)).all_paths()
 
-    assert len(campaign) == 5 and len(smoke) == 5 and len(subset) == 5
+    assert len(campaign) == 8 and len(smoke) == 8 and len(subset) == 8
     everything = list(campaign) + list(smoke) + list(subset)
     assert len(set(everything)) == len(everything), sorted(
         p for p in everything if everything.count(p) > 1)
@@ -181,6 +187,9 @@ def test_only_the_full_campaign_produces_the_contract_names(cfg):
     assert campaign.summary == Path("data/jet_states_summary.txt")
     assert campaign.panels == (Path("figs/double_jet_natl_panels.pdf"),
                                Path("figs/double_jet_natl_panels.png"))
+    assert campaign.explorer == Path("figs/double_jet_natl_explorer.html")
+    assert campaign.season_summary == Path("results/season_summary.csv")
+    assert campaign.annual == Path("figs/double_jet_natl_annual.png")
     assert campaign.evidence is None
     assert set(campaign.all_paths()) == CONTRACT_NAMES
 
