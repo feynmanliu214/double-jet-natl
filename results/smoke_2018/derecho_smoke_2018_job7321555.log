@@ -1,0 +1,70 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) ncarenv/25.10
+=== djet_smoke_2018 -- MJJAS 2018 from RDA, then the §A9 regression ===
+jobid     : 7321555.desched1
+host      : dec1009
+date      : 2026-09-04T16:23:58-06:00
+cwd       : /glade/u/home/zhil/project/double-jet-natl
+PBS_NCPUS : <unset>
+git       : f88ac98
+python    : /glade/work/zhil/conda_envs/aires/bin/python
+version   : Python 3.11.11
+======================================================================
+M9: entry point OK
+16:24:08 INFO    double_jet | config configs/double_jet.yaml (sha 9a6116ad4637)
+16:24:08 INFO    double_jet | run: smoke, seasons 2018-2018 (1), stages download,profile,classify,figure
+16:24:08 INFO    double_jet | preflight archive root /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl -> readable
+16:24:13 INFO    double_jet | preflight archive e5.oper.an.pl.128_131_u.ll025uv.2018050100_2018050123.nc -> opens, level 250 hPa present (index 16 of 37, resolved by value)
+16:24:13 INFO    double_jet | smoke run: the RDA path builds the one season only; the CDS 6-hourly R1 operand does not exist here, and the 2018 regression (§A9) is the evidence instead
+16:24:13 INFO    double_jet | season 2018: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2018.nc is missing
+16:24:13 INFO    double_jet | 0 of 1 requested season(s) already complete and skipped; 1 to build
+16:24:13 INFO    double_jet | season 2018: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+16:25:23 INFO    double_jet | season 2018: checking u250_natl_mjjas_2018.nc.part against the seam before publishing it
+16:25:23 INFO    double_jet | season 2018: complete (23.3 MB, 70.3 s)
+16:25:23 INFO    double_jet | profile: reading season 2018 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2018.nc
+16:25:24 INFO    double_jet | profile: wrote data/smoke_2018_profile.nc -- 153 days x 221 latitudes from 1 season(s) 2018-2018, 0.1 MB
+16:25:24 INFO    double_jet | classifying 153 days x 221 latitudes from data/smoke_2018_profile.nc
+16:25:24 INFO    double_jet | boxcar smoothing: 11 points (2.5 deg), truncated and renormalized at the domain ends
+16:25:24 INFO    double_jet | wrote 153 rows to data/smoke_2018_jet_states.csv
+16:25:24 INFO    double_jet | ==============================================================================
+16:25:24 INFO    double_jet | double-jet classification -- sanity block (plan §4.4)
+16:25:24 INFO    double_jet | ==============================================================================
+16:25:24 INFO    double_jet | days classified : 153
+16:25:24 INFO    double_jet |   double        :     96  ( 62.7 %)
+16:25:24 INFO    double_jet |   single        :     55  ( 35.9 %)
+16:25:24 INFO    double_jet |   none          :      2  (  1.3 %)
+16:25:24 INFO    double_jet | 
+16:25:24 INFO    double_jet | [GATE]     double-jet fraction 0.6275 against band 0.0500-0.9000 -> PASS
+16:25:24 INFO    double_jet | 
+16:25:24 INFO    double_jet | [REPORT]   core latitudes within 25-70 N :  81.4 % of 247 recorded cores (target >= 95 %)
+16:25:24 INFO    double_jet |            out-of-band cores : 46
+16:25:24 INFO    double_jet |            worst offenders (up to 8):
+16:25:24 INFO    double_jet |              2018-09-04    74.75 N
+16:25:24 INFO    double_jet |              2018-05-12    74.50 N
+16:25:24 INFO    double_jet |              2018-05-28    20.50 N
+16:25:24 INFO    double_jet |              2018-07-11    74.50 N
+16:25:24 INFO    double_jet |              2018-09-26    20.75 N
+16:25:24 INFO    double_jet |              2018-07-09    74.00 N
+16:25:24 INFO    double_jet |              2018-07-01    73.50 N
+16:25:24 INFO    double_jet |              2018-09-27    21.50 N
+16:25:24 INFO    double_jet |            REPORTED, NOT A GATE -- operator ruling R2. The band and the 95 % target are printed verbatim;
+16:25:24 INFO    double_jet |            the run finishes and the operator judges. No band is moved here (plan §0 R2, §10 E3).
+16:25:24 INFO    double_jet | 
+16:25:24 INFO    double_jet | [REPORT]   smoke profile, daily maximum of the smoothed profile (m s-1): median 26.87, min 14.65, max 48.81
+16:25:24 INFO    double_jet |            configured plausibility band 20-40 m s-1, read as the SEASON MEDIAN (plan §2 I5)
+16:25:24 INFO    double_jet |            printed for the operator's eyeball check -- never a gate.
+16:25:24 INFO    double_jet | ==============================================================================
+16:25:24 INFO    double_jet | sanity block written to data/smoke_2018_summary.txt
+16:25:24 INFO    double_jet | figure: 1 season(s) in a 1x1 grid, 0 blank cell(s), background Greys smoothed profile -13.9 to 48.8 m s-1
+16:25:25 INFO    double_jet | wrote figs/smoke_2018.png (0.16 MB)
+16:25:25 INFO    double_jet | 2018 regression (§A9): smoke_2018 rebuilt from ds633.0, against the committed CDS baseline in /glade/u/home/zhil/project/double-jet-natl/results/smoke_2018
+16:25:25 INFO    double_jet | 2018 regression, comparison 1: 153/153 rows match exactly on state and core latitudes -> PASS
+16:25:25 INFO    double_jet | 2018 regression, comparison 2: the 28-line summary block matches exactly -> PASS
+16:25:25 INFO    double_jet | 2018 regression, comparison 3: max |U_rda - U_cds| = 0.000e+00 m s-1 over 33813 compared points (tolerance 0.05, expected 33813 points; mean |diff| 0.000e+00) -> PASS
+16:25:25 INFO    double_jet | 2018 regression: states_csv PASS, summary_txt PASS, profile_nc PASS (max |diff| 0.000e+00 m s-1, tolerance 0.05) -> PASS
+16:25:25 INFO    double_jet | 2018 regression record written to data/smoke_2018_regression.json
+======================================================================
+RESULT: exit 0 -- smoke season and the §A9 regression PASSED.
+finished  : 2026-09-04T16:25:26-06:00

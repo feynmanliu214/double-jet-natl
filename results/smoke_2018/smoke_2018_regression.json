@@ -1,0 +1,66 @@
+{
+  "baseline_dir": "/glade/u/home/zhil/project/double-jet-natl/results/smoke_2018",
+  "comparisons": {
+    "jet_states_csv": {
+      "baseline": "/glade/u/home/zhil/project/double-jet-natl/results/smoke_2018/smoke_2018_jet_states.csv",
+      "compared_fields": [
+        "state",
+        "lat_1",
+        "lat_2"
+      ],
+      "current": "data/smoke_2018_jet_states.csv",
+      "mismatches": [],
+      "n_baseline_rows": 153,
+      "n_expected_rows": 153,
+      "n_mismatched_rows": 0,
+      "n_rows": 153,
+      "name": "jet_states_csv",
+      "passed": true,
+      "reason": ""
+    },
+    "profile_nc": {
+      "baseline": "/glade/u/home/zhil/project/double-jet-natl/results/smoke_2018/smoke_2018_profile.nc",
+      "current": "data/smoke_2018_profile.nc",
+      "max_abs_diff": 0.0,
+      "max_abs_diff_date": "2018-05-01",
+      "max_abs_diff_latitude": 20.0,
+      "mean_abs_diff": 0.0,
+      "median_abs_diff": 0.0,
+      "n_compared": 33813,
+      "n_exceeding_tolerance": 0,
+      "n_expected": 33813,
+      "name": "profile_nc",
+      "p99_abs_diff": 0.0,
+      "passed": true,
+      "reason": "",
+      "tolerance": 0.05
+    },
+    "summary_txt": {
+      "baseline": "/glade/u/home/zhil/project/double-jet-natl/results/smoke_2018/smoke_2018_summary.txt",
+      "current": "data/smoke_2018_summary.txt",
+      "differing_lines": [],
+      "n_baseline_lines": 28,
+      "n_lines": 28,
+      "name": "summary_txt",
+      "passed": true,
+      "reason": ""
+    }
+  },
+  "created": "2026-09-04T22:25:25Z",
+  "max_abs_diff": 0.0,
+  "n_compared": 33813,
+  "n_expected": 33813,
+  "note": "a bit-exact profile match is impossible and must not be pursued: the CDS operands are int16-packed and the RDA archive is unpacked float32 (addendum \u00a7A1.7)",
+  "passed": true,
+  "passed_by_comparison": {
+    "jet_states_csv": true,
+    "profile_nc": true,
+    "summary_txt": true
+  },
+  "plan": "wave1-plan-derecho-addendum.md",
+  "profile_sha256": "a375a91a1f7252f5c56a924fae1549cf72e6f75aabb10c4db8918a592087cca8",
+  "source": "rda_hourly",
+  "source_dataset": "ds633.0",
+  "tolerance": 0.05,
+  "year": 2018
+}

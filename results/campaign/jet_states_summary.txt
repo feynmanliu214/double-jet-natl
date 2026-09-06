@@ -1,0 +1,24 @@
+==============================================================================
+double-jet classification -- sanity block (plan §4.4)
+==============================================================================
+days classified : 7191
+  double        :   3246  ( 45.1 %)
+  single        :   3932  ( 54.7 %)
+  none          :     13  (  0.2 %)
+
+[GATE]     double-jet fraction 0.4514 against band 0.0500-0.9000 -> PASS
+
+[REPORT]   core latitudes within 25-70 N :  88.2 % of 10424 recorded cores (target >= 95 %)
+           out-of-band cores : 1227
+           worst offenders (up to 8):
+             1979-06-04    74.75 N
+             1980-05-14    20.25 N
+             1980-06-10    74.75 N
+             1980-07-31    74.75 N
+             1981-05-17    74.75 N
+             1982-05-29    20.25 N
+             1983-05-07    20.25 N
+             1985-05-16    20.25 N
+           REPORTED, NOT A GATE -- operator ruling R2. The band and the 95 % target are printed verbatim;
+           the run finishes and the operator judges. No band is moved here (plan §0 R2, §10 E3).
+==============================================================================

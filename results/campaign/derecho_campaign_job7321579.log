@@ -1,0 +1,307 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) ncarenv/25.10
+=== djet_campaign -- MJJAS 1979-2025, 47 seasons (addendum §A10) ===
+jobid     : 7321579.desched1
+host      : dec0313
+date      : 2026-09-05T00:00:47-06:00
+cwd       : /glade/u/home/zhil/project/double-jet-natl
+PBS_NCPUS : <unset>
+git       : f88ac98
+python    : /glade/work/zhil/conda_envs/aires/bin/python
+version   : Python 3.11.11
+====================================================================
+usage: python -m double_jet [-h] --config CONFIG
+                            [--smoke | --years FIRST-LAST] [--stage STAGES]
+                            [--skip-download] [--preflight-network]
+                            [--log-level LOG_LEVEL]
+
+ERA5 250 hPa double-jet vs single-jet classification, North Atlantic-Europe.
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG       path to configs/double_jet.yaml
+  --smoke               single smoke season end to end, one panel, and the
+                        evidence check the configured source can actually run:
+                        on 'cds_derived' both CDS products and the R1
+                        equivalence gate; on 'rda_hourly' the 2018 regression
+                        against results/smoke_2018/
+  --years FIRST-LAST    inclusive contiguous year range (default: the
+                        configured campaign)
+  --stage STAGES        'all' (default) or a subset of
+                        download,profile,classify,figure
+  --skip-download       never issue a CDS request; validate what is already on
+                        $SCRATCH and fail loudly if any season is missing or
+                        does not match the current request
+  --preflight-network   probe CDS reachability and exit; issues no CDS request
+  --log-level LOG_LEVEL
+00:00:59 INFO    double_jet | config configs/double_jet.yaml (sha 9a6116ad4637)
+00:00:59 INFO    double_jet | run: campaign, seasons 1979-2025 (47), stages download,profile,classify,figure
+00:00:59 INFO    double_jet | preflight archive root /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl -> readable
+00:01:03 INFO    double_jet | preflight archive e5.oper.an.pl.128_131_u.ll025uv.1979050100_1979050123.nc -> opens, level 250 hPa present (index 16 of 37, resolved by value)
+00:01:03 INFO    double_jet | season 1979: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1979.nc is missing
+00:01:03 INFO    double_jet | season 1980: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1980.nc is missing
+00:01:03 INFO    double_jet | season 1981: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1981.nc is missing
+00:01:03 INFO    double_jet | season 1982: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1982.nc is missing
+00:01:03 INFO    double_jet | season 1983: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1983.nc is missing
+00:01:03 INFO    double_jet | season 1984: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1984.nc is missing
+00:01:03 INFO    double_jet | season 1985: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1985.nc is missing
+00:01:03 INFO    double_jet | season 1986: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1986.nc is missing
+00:01:03 INFO    double_jet | season 1987: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1987.nc is missing
+00:01:03 INFO    double_jet | season 1988: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1988.nc is missing
+00:01:03 INFO    double_jet | season 1989: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1989.nc is missing
+00:01:03 INFO    double_jet | season 1990: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1990.nc is missing
+00:01:03 INFO    double_jet | season 1991: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1991.nc is missing
+00:01:03 INFO    double_jet | season 1992: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1992.nc is missing
+00:01:03 INFO    double_jet | season 1993: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1993.nc is missing
+00:01:03 INFO    double_jet | season 1994: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1994.nc is missing
+00:01:03 INFO    double_jet | season 1995: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1995.nc is missing
+00:01:03 INFO    double_jet | season 1996: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1996.nc is missing
+00:01:03 INFO    double_jet | season 1997: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1997.nc is missing
+00:01:03 INFO    double_jet | season 1998: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1998.nc is missing
+00:01:03 INFO    double_jet | season 1999: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1999.nc is missing
+00:01:03 INFO    double_jet | season 2000: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2000.nc is missing
+00:01:03 INFO    double_jet | season 2001: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2001.nc is missing
+00:01:03 INFO    double_jet | season 2002: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2002.nc is missing
+00:01:03 INFO    double_jet | season 2003: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2003.nc is missing
+00:01:03 INFO    double_jet | season 2004: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2004.nc is missing
+00:01:03 INFO    double_jet | season 2005: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2005.nc is missing
+00:01:03 INFO    double_jet | season 2006: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2006.nc is missing
+00:01:03 INFO    double_jet | season 2007: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2007.nc is missing
+00:01:03 INFO    double_jet | season 2008: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2008.nc is missing
+00:01:03 INFO    double_jet | season 2009: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2009.nc is missing
+00:01:03 INFO    double_jet | season 2010: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2010.nc is missing
+00:01:03 INFO    double_jet | season 2011: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2011.nc is missing
+00:01:03 INFO    double_jet | season 2012: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2012.nc is missing
+00:01:03 INFO    double_jet | season 2013: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2013.nc is missing
+00:01:03 INFO    double_jet | season 2014: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2014.nc is missing
+00:01:03 INFO    double_jet | season 2015: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2015.nc is missing
+00:01:03 INFO    double_jet | season 2016: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2016.nc is missing
+00:01:03 INFO    double_jet | season 2017: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2017.nc is missing
+00:01:03 INFO    double_jet | season 2018: already complete, skipping
+00:01:03 INFO    double_jet | season 2019: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2019.nc is missing
+00:01:03 INFO    double_jet | season 2020: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2020.nc is missing
+00:01:03 INFO    double_jet | season 2021: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2021.nc is missing
+00:01:03 INFO    double_jet | season 2022: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2022.nc is missing
+00:01:03 INFO    double_jet | season 2023: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2023.nc is missing
+00:01:03 INFO    double_jet | season 2024: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2024.nc is missing
+00:01:03 INFO    double_jet | season 2025: will be built from the archive -- /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2025.nc is missing
+00:01:03 INFO    double_jet | 1 of 47 requested season(s) already complete and skipped; 46 to build
+00:01:03 INFO    double_jet | season 1979: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:02:16 INFO    double_jet | season 1979: checking u250_natl_mjjas_1979.nc.part against the seam before publishing it
+00:02:16 INFO    double_jet | season 1979: complete (23.0 MB, 73.0 s)
+00:02:16 INFO    double_jet | season 1980: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:03:31 INFO    double_jet | season 1980: checking u250_natl_mjjas_1980.nc.part against the seam before publishing it
+00:03:31 INFO    double_jet | season 1980: complete (23.1 MB, 74.7 s)
+00:03:31 INFO    double_jet | season 1981: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:04:44 INFO    double_jet | season 1981: checking u250_natl_mjjas_1981.nc.part against the seam before publishing it
+00:04:44 INFO    double_jet | season 1981: complete (23.1 MB, 72.8 s)
+00:04:44 INFO    double_jet | season 1982: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:05:59 INFO    double_jet | season 1982: checking u250_natl_mjjas_1982.nc.part against the seam before publishing it
+00:05:59 INFO    double_jet | season 1982: complete (22.9 MB, 74.5 s)
+00:05:59 INFO    double_jet | season 1983: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:07:10 INFO    double_jet | season 1983: checking u250_natl_mjjas_1983.nc.part against the seam before publishing it
+00:07:10 INFO    double_jet | season 1983: complete (23.0 MB, 71.4 s)
+00:07:11 INFO    double_jet | season 1984: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:08:26 INFO    double_jet | season 1984: checking u250_natl_mjjas_1984.nc.part against the seam before publishing it
+00:08:26 INFO    double_jet | season 1984: complete (23.3 MB, 75.7 s)
+00:08:27 INFO    double_jet | season 1985: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:09:42 INFO    double_jet | season 1985: checking u250_natl_mjjas_1985.nc.part against the seam before publishing it
+00:09:42 INFO    double_jet | season 1985: complete (23.2 MB, 76.0 s)
+00:09:43 INFO    double_jet | season 1986: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:10:54 INFO    double_jet | season 1986: checking u250_natl_mjjas_1986.nc.part against the seam before publishing it
+00:10:54 INFO    double_jet | season 1986: complete (23.2 MB, 71.5 s)
+00:10:54 INFO    double_jet | season 1987: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:12:09 INFO    double_jet | season 1987: checking u250_natl_mjjas_1987.nc.part against the seam before publishing it
+00:12:09 INFO    double_jet | season 1987: complete (23.2 MB, 75.2 s)
+00:12:10 INFO    double_jet | season 1988: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:13:19 INFO    double_jet | season 1988: checking u250_natl_mjjas_1988.nc.part against the seam before publishing it
+00:13:19 INFO    double_jet | season 1988: complete (23.1 MB, 69.9 s)
+00:13:20 INFO    double_jet | season 1989: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:14:31 INFO    double_jet | season 1989: checking u250_natl_mjjas_1989.nc.part against the seam before publishing it
+00:14:31 INFO    double_jet | season 1989: complete (23.2 MB, 71.8 s)
+00:14:32 INFO    double_jet | season 1990: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:15:42 INFO    double_jet | season 1990: checking u250_natl_mjjas_1990.nc.part against the seam before publishing it
+00:15:42 INFO    double_jet | season 1990: complete (23.2 MB, 70.6 s)
+00:15:42 INFO    double_jet | season 1991: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:16:56 INFO    double_jet | season 1991: checking u250_natl_mjjas_1991.nc.part against the seam before publishing it
+00:16:56 INFO    double_jet | season 1991: complete (23.0 MB, 73.5 s)
+00:16:56 INFO    double_jet | season 1992: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:18:10 INFO    double_jet | season 1992: checking u250_natl_mjjas_1992.nc.part against the seam before publishing it
+00:18:10 INFO    double_jet | season 1992: complete (23.1 MB, 74.3 s)
+00:18:11 INFO    double_jet | season 1993: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:19:22 INFO    double_jet | season 1993: checking u250_natl_mjjas_1993.nc.part against the seam before publishing it
+00:19:23 INFO    double_jet | season 1993: complete (23.2 MB, 72.2 s)
+00:19:23 INFO    double_jet | season 1994: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:20:35 INFO    double_jet | season 1994: checking u250_natl_mjjas_1994.nc.part against the seam before publishing it
+00:20:36 INFO    double_jet | season 1994: complete (23.0 MB, 72.8 s)
+00:20:36 INFO    double_jet | season 1995: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:21:51 INFO    double_jet | season 1995: checking u250_natl_mjjas_1995.nc.part against the seam before publishing it
+00:21:51 INFO    double_jet | season 1995: complete (23.0 MB, 74.9 s)
+00:21:51 INFO    double_jet | season 1996: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:23:03 INFO    double_jet | season 1996: checking u250_natl_mjjas_1996.nc.part against the seam before publishing it
+00:23:03 INFO    double_jet | season 1996: complete (23.0 MB, 71.8 s)
+00:23:03 INFO    double_jet | season 1997: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:24:16 INFO    double_jet | season 1997: checking u250_natl_mjjas_1997.nc.part against the seam before publishing it
+00:24:16 INFO    double_jet | season 1997: complete (23.1 MB, 73.3 s)
+00:24:17 INFO    double_jet | season 1998: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:25:30 INFO    double_jet | season 1998: checking u250_natl_mjjas_1998.nc.part against the seam before publishing it
+00:25:30 INFO    double_jet | season 1998: complete (23.1 MB, 73.5 s)
+00:25:30 INFO    double_jet | season 1999: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:26:44 INFO    double_jet | season 1999: checking u250_natl_mjjas_1999.nc.part against the seam before publishing it
+00:26:44 INFO    double_jet | season 1999: complete (23.1 MB, 73.9 s)
+00:26:44 INFO    double_jet | season 2000: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:27:57 INFO    double_jet | season 2000: checking u250_natl_mjjas_2000.nc.part against the seam before publishing it
+00:27:58 INFO    double_jet | season 2000: complete (23.3 MB, 73.2 s)
+00:27:58 INFO    double_jet | season 2001: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:29:11 INFO    double_jet | season 2001: checking u250_natl_mjjas_2001.nc.part against the seam before publishing it
+00:29:11 INFO    double_jet | season 2001: complete (23.1 MB, 73.0 s)
+00:29:11 INFO    double_jet | season 2002: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:30:23 INFO    double_jet | season 2002: checking u250_natl_mjjas_2002.nc.part against the seam before publishing it
+00:30:23 INFO    double_jet | season 2002: complete (23.2 MB, 71.9 s)
+00:30:23 INFO    double_jet | season 2003: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:31:42 INFO    double_jet | season 2003: checking u250_natl_mjjas_2003.nc.part against the seam before publishing it
+00:31:42 INFO    double_jet | season 2003: complete (23.3 MB, 79.0 s)
+00:31:42 INFO    double_jet | season 2004: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:32:53 INFO    double_jet | season 2004: checking u250_natl_mjjas_2004.nc.part against the seam before publishing it
+00:32:54 INFO    double_jet | season 2004: complete (23.2 MB, 71.4 s)
+00:32:54 INFO    double_jet | season 2005: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:34:07 INFO    double_jet | season 2005: checking u250_natl_mjjas_2005.nc.part against the seam before publishing it
+00:34:07 INFO    double_jet | season 2005: complete (23.1 MB, 73.3 s)
+00:34:07 INFO    double_jet | season 2006: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:35:19 INFO    double_jet | season 2006: checking u250_natl_mjjas_2006.nc.part against the seam before publishing it
+00:35:20 INFO    double_jet | season 2006: complete (23.2 MB, 72.5 s)
+00:35:20 INFO    double_jet | season 2007: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:36:33 INFO    double_jet | season 2007: checking u250_natl_mjjas_2007.nc.part against the seam before publishing it
+00:36:33 INFO    double_jet | season 2007: complete (23.0 MB, 73.0 s)
+00:36:33 INFO    double_jet | season 2008: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:37:45 INFO    double_jet | season 2008: checking u250_natl_mjjas_2008.nc.part against the seam before publishing it
+00:37:46 INFO    double_jet | season 2008: complete (23.2 MB, 72.5 s)
+00:37:46 INFO    double_jet | season 2009: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:39:00 INFO    double_jet | season 2009: checking u250_natl_mjjas_2009.nc.part against the seam before publishing it
+00:39:01 INFO    double_jet | season 2009: complete (23.0 MB, 74.9 s)
+00:39:01 INFO    double_jet | season 2010: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:40:12 INFO    double_jet | season 2010: checking u250_natl_mjjas_2010.nc.part against the seam before publishing it
+00:40:13 INFO    double_jet | season 2010: complete (23.3 MB, 71.8 s)
+00:40:13 INFO    double_jet | season 2011: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:41:26 INFO    double_jet | season 2011: checking u250_natl_mjjas_2011.nc.part against the seam before publishing it
+00:41:27 INFO    double_jet | season 2011: complete (23.2 MB, 73.9 s)
+00:41:27 INFO    double_jet | season 2012: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:42:39 INFO    double_jet | season 2012: checking u250_natl_mjjas_2012.nc.part against the seam before publishing it
+00:42:39 INFO    double_jet | season 2012: complete (23.1 MB, 72.6 s)
+00:42:40 INFO    double_jet | season 2013: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:43:57 INFO    double_jet | season 2013: checking u250_natl_mjjas_2013.nc.part against the seam before publishing it
+00:43:57 INFO    double_jet | season 2013: complete (23.3 MB, 77.7 s)
+00:43:57 INFO    double_jet | season 2014: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:45:10 INFO    double_jet | season 2014: checking u250_natl_mjjas_2014.nc.part against the seam before publishing it
+00:45:10 INFO    double_jet | season 2014: complete (23.2 MB, 72.5 s)
+00:45:10 INFO    double_jet | season 2015: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:46:26 INFO    double_jet | season 2015: checking u250_natl_mjjas_2015.nc.part against the seam before publishing it
+00:46:26 INFO    double_jet | season 2015: complete (23.1 MB, 76.0 s)
+00:46:26 INFO    double_jet | season 2016: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:47:39 INFO    double_jet | season 2016: checking u250_natl_mjjas_2016.nc.part against the seam before publishing it
+00:47:39 INFO    double_jet | season 2016: complete (23.2 MB, 72.8 s)
+00:47:39 INFO    double_jet | season 2017: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:48:54 INFO    double_jet | season 2017: checking u250_natl_mjjas_2017.nc.part against the seam before publishing it
+00:48:54 INFO    double_jet | season 2017: complete (23.2 MB, 75.0 s)
+00:48:54 INFO    double_jet | season 2019: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:50:07 INFO    double_jet | season 2019: checking u250_natl_mjjas_2019.nc.part against the seam before publishing it
+00:50:07 INFO    double_jet | season 2019: complete (23.3 MB, 72.8 s)
+00:50:07 INFO    double_jet | season 2020: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:51:21 INFO    double_jet | season 2020: checking u250_natl_mjjas_2020.nc.part against the seam before publishing it
+00:51:22 INFO    double_jet | season 2020: complete (23.1 MB, 74.3 s)
+00:51:22 INFO    double_jet | season 2021: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:52:34 INFO    double_jet | season 2021: checking u250_natl_mjjas_2021.nc.part against the seam before publishing it
+00:52:35 INFO    double_jet | season 2021: complete (23.3 MB, 72.7 s)
+00:52:35 INFO    double_jet | season 2022: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:53:46 INFO    double_jet | season 2022: checking u250_natl_mjjas_2022.nc.part against the seam before publishing it
+00:53:47 INFO    double_jet | season 2022: complete (23.5 MB, 71.7 s)
+00:53:47 INFO    double_jet | season 2023: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:54:58 INFO    double_jet | season 2023: checking u250_natl_mjjas_2023.nc.part against the seam before publishing it
+00:54:58 INFO    double_jet | season 2023: complete (23.1 MB, 71.5 s)
+00:54:59 INFO    double_jet | season 2024: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:56:13 INFO    double_jet | season 2024: checking u250_natl_mjjas_2024.nc.part against the seam before publishing it
+00:56:13 INFO    double_jet | season 2024: complete (23.1 MB, 74.2 s)
+00:56:13 INFO    double_jet | season 2025: building 153 archive day(s) from /glade/campaign/collections/rda/data/d633000/e5.oper.an.pl, 8 worker process(es) (from cfg.rda.workers)
+00:57:21 INFO    double_jet | season 2025: checking u250_natl_mjjas_2025.nc.part against the seam before publishing it
+00:57:21 INFO    double_jet | season 2025: complete (23.2 MB, 67.9 s)
+00:57:21 INFO    double_jet | profile: reading season 1979 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1979.nc
+00:57:21 INFO    double_jet | profile: reading season 1980 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1980.nc
+00:57:22 INFO    double_jet | profile: reading season 1981 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1981.nc
+00:57:22 INFO    double_jet | profile: reading season 1982 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1982.nc
+00:57:22 INFO    double_jet | profile: reading season 1983 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1983.nc
+00:57:23 INFO    double_jet | profile: reading season 1984 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1984.nc
+00:57:23 INFO    double_jet | profile: reading season 1985 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1985.nc
+00:57:23 INFO    double_jet | profile: reading season 1986 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1986.nc
+00:57:23 INFO    double_jet | profile: reading season 1987 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1987.nc
+00:57:24 INFO    double_jet | profile: reading season 1988 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1988.nc
+00:57:24 INFO    double_jet | profile: reading season 1989 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1989.nc
+00:57:24 INFO    double_jet | profile: reading season 1990 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1990.nc
+00:57:25 INFO    double_jet | profile: reading season 1991 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1991.nc
+00:57:25 INFO    double_jet | profile: reading season 1992 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1992.nc
+00:57:25 INFO    double_jet | profile: reading season 1993 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1993.nc
+00:57:26 INFO    double_jet | profile: reading season 1994 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1994.nc
+00:57:26 INFO    double_jet | profile: reading season 1995 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1995.nc
+00:57:26 INFO    double_jet | profile: reading season 1996 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1996.nc
+00:57:27 INFO    double_jet | profile: reading season 1997 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1997.nc
+00:57:27 INFO    double_jet | profile: reading season 1998 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1998.nc
+00:57:27 INFO    double_jet | profile: reading season 1999 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_1999.nc
+00:57:27 INFO    double_jet | profile: reading season 2000 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2000.nc
+00:57:28 INFO    double_jet | profile: reading season 2001 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2001.nc
+00:57:28 INFO    double_jet | profile: reading season 2002 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2002.nc
+00:57:28 INFO    double_jet | profile: reading season 2003 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2003.nc
+00:57:29 INFO    double_jet | profile: reading season 2004 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2004.nc
+00:57:29 INFO    double_jet | profile: reading season 2005 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2005.nc
+00:57:29 INFO    double_jet | profile: reading season 2006 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2006.nc
+00:57:30 INFO    double_jet | profile: reading season 2007 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2007.nc
+00:57:30 INFO    double_jet | profile: reading season 2008 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2008.nc
+00:57:30 INFO    double_jet | profile: reading season 2009 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2009.nc
+00:57:31 INFO    double_jet | profile: reading season 2010 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2010.nc
+00:57:31 INFO    double_jet | profile: reading season 2011 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2011.nc
+00:57:31 INFO    double_jet | profile: reading season 2012 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2012.nc
+00:57:31 INFO    double_jet | profile: reading season 2013 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2013.nc
+00:57:32 INFO    double_jet | profile: reading season 2014 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2014.nc
+00:57:32 INFO    double_jet | profile: reading season 2015 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2015.nc
+00:57:32 INFO    double_jet | profile: reading season 2016 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2016.nc
+00:57:33 INFO    double_jet | profile: reading season 2017 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2017.nc
+00:57:33 INFO    double_jet | profile: reading season 2018 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2018.nc
+00:57:33 INFO    double_jet | profile: reading season 2019 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2019.nc
+00:57:34 INFO    double_jet | profile: reading season 2020 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2020.nc
+00:57:34 INFO    double_jet | profile: reading season 2021 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2021.nc
+00:57:34 INFO    double_jet | profile: reading season 2022 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2022.nc
+00:57:35 INFO    double_jet | profile: reading season 2023 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2023.nc
+00:57:35 INFO    double_jet | profile: reading season 2024 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2024.nc
+00:57:35 INFO    double_jet | profile: reading season 2025 from /glade/derecho/scratch/zhil/double-jet-natl/era5_raw/u250_natl_mjjas_2025.nc
+00:57:36 INFO    double_jet | profile: wrote data/u250_natl_mjjas_1979-2025.nc -- 7191 days x 221 latitudes from 47 season(s) 1979-2025, 4.7 MB
+00:57:36 INFO    double_jet | classifying 7191 days x 221 latitudes from data/u250_natl_mjjas_1979-2025.nc
+00:57:36 INFO    double_jet | boxcar smoothing: 11 points (2.5 deg), truncated and renormalized at the domain ends
+00:57:37 INFO    double_jet | wrote 7191 rows to data/jet_states_mjjas_1979-2025.csv
+00:57:37 INFO    double_jet | ==============================================================================
+00:57:37 INFO    double_jet | double-jet classification -- sanity block (plan §4.4)
+00:57:37 INFO    double_jet | ==============================================================================
+00:57:37 INFO    double_jet | days classified : 7191
+00:57:37 INFO    double_jet |   double        :   3246  ( 45.1 %)
+00:57:37 INFO    double_jet |   single        :   3932  ( 54.7 %)
+00:57:37 INFO    double_jet |   none          :     13  (  0.2 %)
+00:57:37 INFO    double_jet | 
+00:57:37 INFO    double_jet | [GATE]     double-jet fraction 0.4514 against band 0.0500-0.9000 -> PASS
+00:57:37 INFO    double_jet | 
+00:57:37 INFO    double_jet | [REPORT]   core latitudes within 25-70 N :  88.2 % of 10424 recorded cores (target >= 95 %)
+00:57:37 INFO    double_jet |            out-of-band cores : 1227
+00:57:37 INFO    double_jet |            worst offenders (up to 8):
+00:57:37 INFO    double_jet |              1979-06-04    74.75 N
+00:57:37 INFO    double_jet |              1980-05-14    20.25 N
+00:57:37 INFO    double_jet |              1980-06-10    74.75 N
+00:57:37 INFO    double_jet |              1980-07-31    74.75 N
+00:57:37 INFO    double_jet |              1981-05-17    74.75 N
+00:57:37 INFO    double_jet |              1982-05-29    20.25 N
+00:57:37 INFO    double_jet |              1983-05-07    20.25 N
+00:57:37 INFO    double_jet |              1985-05-16    20.25 N
+00:57:37 INFO    double_jet |            REPORTED, NOT A GATE -- operator ruling R2. The band and the 95 % target are printed verbatim;
+00:57:37 INFO    double_jet |            the run finishes and the operator judges. No band is moved here (plan §0 R2, §10 E3).
+00:57:37 INFO    double_jet | ==============================================================================
+00:57:37 INFO    double_jet | sanity block written to data/jet_states_summary.txt
+00:57:39 INFO    double_jet | figure: 47 season(s) in a 8x6 grid, 1 blank cell(s), background Greys smoothed profile -38.8 to 53.0 m s-1
+00:57:48 INFO    double_jet | wrote figs/double_jet_natl_panels.pdf (1.92 MB)
+00:57:52 INFO    double_jet | wrote figs/double_jet_natl_panels.png (1.70 MB)
