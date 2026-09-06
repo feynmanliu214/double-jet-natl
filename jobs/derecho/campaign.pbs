@@ -2,7 +2,7 @@
 # =============================================================================
 # wave1-plan-derecho-addendum.md §A10.2 -- the 47-season campaign on Derecho.
 #
-# All four stages (download -> profile -> classify -> figure) over MJJAS
+# All four stages (download -> profile -> classify -> explorer) over MJJAS
 # 1979-2025, in ONE submission. Stage 1 is the RDA loader, not CDS: the daily
 # means are computed locally from the hourly archive already on /glade
 # (deviation D3). No network, no CDS request, no queue.

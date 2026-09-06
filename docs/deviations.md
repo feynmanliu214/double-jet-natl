@@ -182,3 +182,35 @@ exact contract `profile.open_normalized` enforces, the archive path to character
 the compute authorization, and the deliverables. `results/` now carries the smoke-season outputs and
 the job logs as a committed regression baseline, since `data/`, `figs/` and `logs/` are gitignored
 and a fresh clone would otherwise arrive with no evidence at all.
+
+---
+
+## D4 — The 47-panel figure is retired; an interactive explorer replaces it
+
+**Date:** 2026-09-06 · **Authority:** operator, explicit, this date
+**Plan text superseded:** §7 **M7** and §4.5's campaign instance.
+
+**The decision.** `figs/double_jet_natl_panels.{pdf,png}` is no longer a deliverable. In its place
+the build produces `figs/double_jet_natl_explorer.html` (one self-contained interactive explorer, no
+network and no external scripts), `results/season_summary.csv` (tracked; one row per season) and
+`figs/double_jet_natl_annual.png` (a static rendering of the explorer's top chart, from that CSV).
+**The reason:** the 47-panel grid buries the state sequence under a noisy background and offers no
+way to see a merge.
+
+**What is unchanged.** The classification, every threshold, the sector, the level, the season, the
+year range, `data/u250_natl_mjjas_1979-2025.nc`, `data/jet_states_mjjas_1979-2025.csv`,
+`config_sha256` and `profile_sha256`. No frozen number is touched and no config value changes.
+
+**Why this is not a change to the science.** Every number the explorer plots is read from the CSV,
+and every number in its method block is read from the CSV, the intermediate's attributes, or the
+config — a test recomputes the summary table independently from the CSV and asserts equality. The
+one limit, recorded rather than papered over: the four detection numbers (three thresholds and the
+smoothing window) live outside `profile_sha256` by design, so they are read from the config in hand;
+the three thresholds are additionally checked against every CSV row, and the smoothing window cannot
+be checked from the CSV at all.
+
+**Scope.** The panel-figure code stays in the tree and stays working: it remains the smoke run's
+**M6** deliverable and `--stage figure` still builds the campaign panels on demand. It is simply no
+longer part of the one-command build (`cli.default_stages`). The committed
+`results/campaign/double_jet_natl_panels.{pdf,png}` are left in place as the record of what the
+2026-09-05 campaign run actually produced.

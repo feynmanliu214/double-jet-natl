@@ -43,8 +43,14 @@ Deliverables produced (paths per §A12):
 | `data/u250_natl_mjjas_1979-2025.nc` | 4.7 MB — 7 191 days × 221 latitudes |
 | `data/jet_states_mjjas_1979-2025.csv` | 7 191 rows + header |
 | `data/jet_states_summary.txt` | the §4.4 sanity block |
-| `figs/double_jet_natl_panels.pdf` / `.png` | 1.92 MB / 1.70 MB, 47 panels in an 8 × 6 grid |
+| `figs/double_jet_natl_explorer.html` | 202.1 KB — 47 seasons embedded as JSON, no network, no external scripts (**D4**) |
+| `results/season_summary.csv` | 47 rows + header — one row per season (**D4**) |
+| `figs/double_jet_natl_annual.png` | 98.2 KB — 2200 × 500, the explorer's annual chart (**D4**) |
 | `data/smoke_2018_regression.json` | §A9 evidence, all three comparisons passed |
+
+The three **D4** rows are the deliverable set as it now stands, not what this job wrote: the
+2026-09-05 run produced `figs/double_jet_natl_panels.pdf` / `.png` (1.92 MB / 1.70 MB, 47 panels
+in an 8 × 6 grid), which D4 retired afterwards and which are retained in `results/campaign/`.
 
 The intermediate carries the full provenance the addendum required: `source_dataset: ds633.0`, the
 RDA request template with the archive root and file template, `profile_sha256`
